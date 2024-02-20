@@ -12,6 +12,8 @@ public class DatabaseSetupUtil {
     public static void createTables() {
         dropUsersTable();
         createUsersTable();
+        dropItemsTable();
+        createItemsTable();
     }
 
 
@@ -58,5 +60,46 @@ public class DatabaseSetupUtil {
         }
     }
     
+    public static void createItemsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS items ("
+                + "id SERIAL PRIMARY KEY,"
+                + "farmer_id INT,"
+                + "name VARCHAR(255),"
+                + "description TEXT,"
+                + "price DECIMAL(10, 2),"
+                + "quantity_available INT,"
+                + "type VARCHAR(50),"
+                + "condition VARCHAR(50)"
+                + ");";
+    
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+        
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             
+            pstmt.executeUpdate();
 
+            System.out.println("Table 'items' created successfully.");
+            
+        } catch (SQLException e) {
+            System.out.println("Error creating table 'items': " + e.getMessage());
+        }
+    }
+
+    public static void dropItemsTable() {
+        String sql = "DROP TABLE IF EXISTS items";
+
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+        
+             Statement stmt = conn.createStatement()) {
+             
+            stmt.execute(sql);
+
+            System.out.println("Table 'items' dropped successfully.");
+            
+        } catch (SQLException e) {
+            System.out.println("An error occurred while dropping the table: " + e.getMessage());
+
+            e.printStackTrace();
+        }
+    }
 }

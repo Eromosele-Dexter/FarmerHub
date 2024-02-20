@@ -26,7 +26,6 @@ public class UserService {
             return ; 
         }
 
-
         User newUser = null;
 
         if(role.toUpperCase().equals(UserRoles.FARMER)) {
@@ -35,8 +34,6 @@ public class UserService {
         else {
             newUser = new Customer(firstName, lastName, userName, password);
         }
-
-        new User(firstName, lastName, userName, password);
 
         User user = userRepository.getUserByUsername(userName);
 
@@ -54,7 +51,7 @@ public class UserService {
         return userRepository.validateUser(username, password);
     }
 
-    private static String validateUserRegistration(String firstName, String lastName, String userName, String password, String role) {
+    private String validateUserRegistration(String firstName, String lastName, String userName, String password, String role) {
         StringBuilder missingFields = new StringBuilder("Missing fields: ");
 
         if (firstName == null || firstName.trim().isEmpty()) missingFields.append("\nFirst Name, ");

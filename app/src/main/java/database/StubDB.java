@@ -3,6 +3,8 @@ package database;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Machine;
+import models.Produce;
 import models.User;
 
 // This is a STUB Database

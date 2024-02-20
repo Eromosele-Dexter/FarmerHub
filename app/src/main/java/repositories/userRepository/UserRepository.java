@@ -24,7 +24,7 @@ public class UserRepository implements IUserRepository{
              if(user instanceof Farmer){
                 role = UserRoles.FARMER;
              }
-             else if(user instanceof Customer){
+             else {
                 role = UserRoles.CUSTOMER;
              }
 
