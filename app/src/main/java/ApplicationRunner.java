@@ -1,10 +1,10 @@
 
 import javafx.stage.Stage;
+import utils.DatabaseSeedingUtil;
 import views.LoginController;
 import views.LoginView;
 
 import java.io.IOException;
-
 import database.StubDB;
 
 public class ApplicationRunner extends javafx.application.Application {
@@ -16,9 +16,12 @@ public class ApplicationRunner extends javafx.application.Application {
 		StubDB.intializeUserDB();
 		// Start the Login View
 		login.start(stage);
+		System.out.println("ApplicationRunner.java Running....");
+		DatabaseSeedingUtil db = new DatabaseSeedingUtil();
+		db.seedDatabase();
 	}
 	public static void main(String[] args) {
+
 		launch();
-        System.out.println("ApplicationRunner.java Running....");
 	}
 }

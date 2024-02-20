@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="team1.project.AppTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-02-20T17:24:08" hostname="Dexters-Mac" time="0.018">
-  <properties/>
-  <testcase name="test()" classname="team1.project.AppTest" time="0.018"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
