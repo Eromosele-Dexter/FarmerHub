@@ -2,7 +2,7 @@ package views;
 
 import org.kordamp.bootstrapfx.BootstrapFX;
 
-
+import controllers.RegistrationController;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

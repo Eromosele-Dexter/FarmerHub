@@ -15,10 +15,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
+import controllers.LoginController;
+
 
 
 public class LoginView {
 	static LoginController loginController;
+	
 	public LoginView(LoginController loginController) {
 		LoginView.loginController = loginController;
 	}

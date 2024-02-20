@@ -1,4 +1,4 @@
-package views;
+package controllers;
 
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -11,11 +11,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import repositories.userRepository.UserRepository;
 import services.UserService;
+import views.LoginView;
 
 public class RegistrationController {
 
 	// Event Handler for Back to Login Button
-		protected static EventHandler<ActionEvent> onBackToLoginButtonClick(Stage stage) {
+		public static EventHandler<ActionEvent> onBackToLoginButtonClick(Stage stage) {
 			return new EventHandler<ActionEvent>() {
 
 				@Override
@@ -31,7 +32,7 @@ public class RegistrationController {
 		}
 		
 		// Event Handler for Register Button
-		protected static EventHandler<ActionEvent> onRegisterButtonClick(TextField fnTextField, TextField lnTextField, TextField unTextField, PasswordField pwBox, ChoiceBox<String> cb, Text actionTarget, Stage stage) {
+		public static EventHandler<ActionEvent> onRegisterButtonClick(TextField fnTextField, TextField lnTextField, TextField unTextField, PasswordField pwBox, ChoiceBox<String> cb, Text actionTarget, Stage stage) {
 
 			return new EventHandler<ActionEvent>() {
 

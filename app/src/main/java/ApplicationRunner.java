@@ -1,10 +1,11 @@
 
 import javafx.stage.Stage;
 import utils.DatabaseSeedingUtil;
-import views.LoginController;
 import views.LoginView;
 
 import java.io.IOException;
+
+import controllers.LoginController;
 import database.StubDB;
 
 public class ApplicationRunner extends javafx.application.Application {

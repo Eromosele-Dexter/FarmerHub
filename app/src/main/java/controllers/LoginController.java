@@ -1,4 +1,4 @@
-package views;
+package controllers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -12,6 +12,9 @@ import models.Farmer;
 import models.User;
 import repositories.userRepository.UserRepository;
 import services.UserService;
+import views.CustomerLandingPage;
+import views.FarmerLandingPage;
+import views.RegistrationPageView;
 
 
 public class LoginController {
@@ -23,7 +26,7 @@ public class LoginController {
 	}
 
 
-	protected EventHandler<ActionEvent> onLoginButtonClick(Text actionTarget, TextField userTextField,
+	public EventHandler<ActionEvent> onLoginButtonClick(Text actionTarget, TextField userTextField,
 			PasswordField pwBox, Stage stage) {
 
 		return new EventHandler<ActionEvent>() {
@@ -58,19 +61,19 @@ public class LoginController {
 		};
 	}
 	
-	protected ChangeListener<? super String> onUserNameTextChange(Text actionTarget) {
+	public ChangeListener<? super String> onUserNameTextChange(Text actionTarget) {
 		return (observable, oldValue, newValue) -> {
 			actionTarget.setText("");
 		};
 	}
-	protected ChangeListener<? super String> onPasswordTextChange(Text actionTarget) {
+	public ChangeListener<? super String> onPasswordTextChange(Text actionTarget) {
 		return (observable, oldValue, newValue) -> {
 			actionTarget.setText("");
 		};
 	}
 
 	// Event Handler for Register Button
-	protected EventHandler<ActionEvent> onRegisterButtonClick(Stage stage) {
+	public EventHandler<ActionEvent> onRegisterButtonClick(Stage stage) {
 		return new EventHandler<ActionEvent>() {
 
 			@Override
