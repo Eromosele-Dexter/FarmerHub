@@ -7,4 +7,5 @@ public interface IUserRepository {
     public void deleteUser(String userName);
     public void updateUser(User user, String role);
     public User getUserByUsername(String userName);
+    public User validateUser(String username, String password);
 }

@@ -3,64 +3,61 @@ package views;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import java.util.List;
+import models.Customer;
+import models.Farmer;
+import models.User;
+import repositories.userRepository.IUserRepository;
+import repositories.userRepository.UserRepository;
 
-import database.StubDB;
-import database.User;
 
 public class LoginController {
-	//List<String> UserList = List.of("user1", "user2", "user3");
-	//List<String> PasswordList = List.of("password1", "password2", "password3");
+	
+	private IUserRepository	userRepository;
 
-
-	// Users List from STUB DB
-
-	List<User> usersList = StubDB.getUsersList();
-	int userIndex = 0;
+	public LoginController() {
+		this.userRepository = new UserRepository();
+	}
 
 
 	protected EventHandler<ActionEvent> onLoginButtonClick(Text actionTarget, TextField userTextField,
 			PasswordField pwBox, Stage stage) {
+
 		return new EventHandler<ActionEvent>() {
+
 			@Override
 			public void handle(ActionEvent event) {
 				String username = userTextField.getText();
+
 				String password = pwBox.getText();
 
+				User user = userRepository.validateUser(username, password);
 
-				// Check if username and password match
-				for(int i = 0; i < usersList.size();i++) {
-					if (username.equals(usersList.get(i).getUserName()) && password.equals(usersList.get(i).getPassword())){
-						actionTarget.setFill(javafx.scene.paint.Color.GREEN);
-						actionTarget.setText("Login successful");
-						// change scene						
+				boolean isValidUser = user != null;
 
-						// If User is of type "Customer", open CustomerLandingPage
-						// If User is of type "Farmer", open FarmerLandingPage
-						if(usersList.get(i).getUserType().equals("Farmer")) {
-							FarmerLandingPage farmerLandingPage = new FarmerLandingPage(stage);
-							return;
-						}
-						else if (usersList.get(i).getUserType().equals("Customer")) {
-							CustomerLandingPage customerLandingPage = new CustomerLandingPage(stage);
-							return;
-						}
 
+				if (isValidUser){
+					actionTarget.setFill(javafx.scene.paint.Color.GREEN);
+					actionTarget.setText("Login successful");
+
+					if(user instanceof Farmer) {
+						FarmerLandingPage farmerLandingPage = new FarmerLandingPage(stage);
+						return;
 					}
-				}
+					else if (user instanceof Customer) {
+						CustomerLandingPage customerLandingPage = new CustomerLandingPage(stage);
+						return;
+					}
 
-
+				}	
 				actionTarget.setText("Login failed");
-
 			}
 		};
 	}
+	
 	protected ChangeListener<? super String> onUserNameTextChange(Text actionTarget) {
 		return (observable, oldValue, newValue) -> {
 			actionTarget.setText("");
@@ -78,9 +75,7 @@ public class LoginController {
 
 			@Override
 			public void handle(ActionEvent event) {
-				// TODO Auto-generated method stub
 				 RegistrationPageView registrationPage = new RegistrationPageView(stage);
-	
 			}
 
 		};

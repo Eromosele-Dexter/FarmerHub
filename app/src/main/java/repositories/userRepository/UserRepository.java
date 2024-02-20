@@ -91,6 +91,30 @@ public class UserRepository implements IUserRepository{
         return null;
     }
 
+    public User validateUser(String username, String password) {
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                User user = parseUser(rs);
+
+                return user;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
     public void updateUser(User user, String role) {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, password = ?, role = ? WHERE username = ?";
     
