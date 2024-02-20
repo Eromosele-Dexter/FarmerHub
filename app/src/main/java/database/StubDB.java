@@ -3,6 +3,8 @@ package database;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.User;
+
 // This is a STUB Database
 // User Database
 // Produce Listings Database
@@ -35,9 +37,9 @@ public class StubDB {
 	}
 	
 	public static void intializeUserDB() {
-		User u1 = new User("John","Smith","Farmer","john123","pass1");
-		User u2 = new User("Alice","Johnson","Customer","alice456","pass2");
-		User u3 = new User("Bob","Williams","Customer","bob789","pass3");
+		User u1 = new User("John","Smith","john123","pass1");
+		User u2 = new User("Alice","Johnson","alice456","pass2");
+		User u3 = new User("Bob","Williams","bob789","pass3");
 		usersList.add(u1);
 		usersList.add(u2);
 		usersList.add(u3);

@@ -10,16 +10,16 @@ import javafx.stage.Stage;
 import models.Customer;
 import models.Farmer;
 import models.User;
-import repositories.userRepository.IUserRepository;
 import repositories.userRepository.UserRepository;
+import services.UserService;
 
 
 public class LoginController {
 	
-	private IUserRepository	userRepository;
+	private UserService userService;
 
 	public LoginController() {
-		this.userRepository = new UserRepository();
+		this.userService = new UserService(new UserRepository());
 	}
 
 
@@ -34,12 +34,12 @@ public class LoginController {
 
 				String password = pwBox.getText();
 
-				User user = userRepository.validateUser(username, password);
+				User user = userService.handleUserLogin(username, password);
 
-				boolean isValidUser = user != null;
+				boolean isSuccessfulLogin = user != null;
 
 
-				if (isValidUser){
+				if (isSuccessfulLogin){
 					actionTarget.setFill(javafx.scene.paint.Color.GREEN);
 					actionTarget.setText("Login successful");
 
