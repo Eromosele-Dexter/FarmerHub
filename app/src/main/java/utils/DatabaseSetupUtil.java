@@ -107,13 +107,15 @@ public class DatabaseSetupUtil {
 
     public static void createOrderItemsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS order_items ("
-                + "item_id INT,"
-                + "customer_id INT,"
-                + "quantity INT,"
-                + "price DECIMAL(10, 2),"
-                + "date_ordered VARCHAR(255)"
-                + ");";
-    
+            + "item_id INT,"
+            + "customer_id INT,"
+            + "quantity INT,"
+            + "price DECIMAL(10, 2),"
+            + "date_ordered VARCHAR(255),"
+            + "has_been_purchased BOOLEAN DEFAULT FALSE" 
+            + ");";
+
+        
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
         
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -1,8 +1,11 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import models.Item;
 import models.OrderItem;
+import models.OrderItemResponse;
 import repositories.orderItemRepository.IOrderItemRepository;
 
 public class OrderService {
@@ -26,26 +29,100 @@ public class OrderService {
         orderItemRepository.createOrderItem(orderItem);
     }
 
-    public List<OrderItem> getOrdersByCustomerId(int customerId) {
-        return orderItemRepository.getOrderItemsByCustomerId(customerId);
+    public List<OrderItemResponse> getOrdersByCustomerId(int customerId) {
+        List<OrderItem> orderItems = orderItemRepository.getOrderItemsByCustomerId(customerId);
+
+        List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();
+
+        for (OrderItem orderItem : orderItems) {
+            orderItemResponses.add(getOrderItemResponse(orderItem));
+        }
+
+        return orderItemResponses;
     }
 
-    // public List<OrderItem> getOrders() {
+    public OrderItemResponse getOrderItemByItemIdAndCustomerId(int itemId, int customerId) {
+        OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerId(itemId, customerId);
 
-     
-    // }
-
-    public void deleteOrder(int orderId) {
-
+        return getOrderItemResponse(orderItem);     
     }
 
     public void updateOrder(List<OrderItem> orderItems, String dateTime) {
- // TODO: update order date time for all orders in order, this is called when order is placed
+
+        String date = new Date().getTime()+"";
+
+        for (OrderItem orderItem : orderItems) {
+            orderItem.setDateOrdered(date);
+            orderItemRepository.updateOrderItem(orderItem);
+        }
     }
 
     public void placeOrder(int customerId, int[] itemIds, int[] quantities) {
- 
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+
+        for (int i = 0; i < itemIds.length; i++) {
+            Item item = itemService.handleGetItemById(itemIds[i]);
+
+            if (item.getQuantityAvailable() < quantities[i]) {
+                throw new IllegalArgumentException("Not enough items in stock for item: " + item.getName() + " to fulfill order.");
+            }
+
+            OrderItem orderItem = new OrderItem(
+                itemIds[i],
+                customerId,
+                quantities[i],
+                item.getPrice(),
+                new Date().getTime()+""
+            );
+
+            orderItem.setHasBeenPurchased(true);
+
+            orderItems.add(orderItem);
+        }
+
+        updateOrder(orderItems, new Date().getTime()+"");
+    }
+
+    public List<OrderItemResponse> getItemSoldHistory(int farmerId) {
+        List<Item> farmersItems = itemService.handleGetItemsByFarmerId(farmerId);
+        
+        List<Integer> itemIds = new ArrayList<Integer>();
+
+        for (Item item : farmersItems) {
+            itemIds.add(item.getId());
+        }
+
+        List<OrderItem> orderItems = orderItemRepository.getOrderItemsByItemIds(itemIds);
+
+        List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();
+
+        for (OrderItem orderItem : orderItems) {
+            if(orderItem.hasBeenPurchased())
+                orderItemResponses.add(getOrderItemResponse(orderItem));
+        }
+
+        return orderItemResponses;
+    }
+
+    public List<OrderItemResponse> getPurchaseHistory(int customerId) {
+        List<OrderItem> orderItems = orderItemRepository.getOrderItemsByCustomerId(customerId);
+
+        List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();
+
+        for (OrderItem orderItem : orderItems) {
+            if(orderItem.hasBeenPurchased())
+                orderItemResponses.add(getOrderItemResponse(orderItem));
+        }
+
+        return orderItemResponses;
+    }
+
+    private OrderItemResponse getOrderItemResponse(OrderItem orderItem) {
+        Item item = itemService.handleGetItemById(orderItem.getItemId());
+
+       return new OrderItemResponse(orderItem.getItemId(), orderItem.getId(), item.getFarmerId(), item.getName(),
+        item.getDescription(), item.getPrice(), orderItem.getCustomerId(),
+         orderItem.getQuantity(), orderItem.getDateOrdered());
     }
     
-
 }

@@ -2,24 +2,38 @@ package models;
 
 public class RatingAndReview {
 
-    private int orderId;
+    private int orderItemId;
+
+    private int customerId;
 
     private int rating ; // 1-5
 
     private String review;
 
-    public RatingAndReview(int orderId, int rating, String review) {
-        this.orderId = orderId;
+    private String date;
+
+    public RatingAndReview(int orderItemId, int customerId, int rating, String review, String date) {
+        this.orderItemId = orderItemId;
+        this.customerId = customerId;
         this.rating = rating;
         this.review = review;
+        this.date = date;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public int getOrderItemId() {
+        return orderItemId;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrderItemId(int orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public int getRating() {
@@ -38,5 +52,12 @@ public class RatingAndReview {
         this.review = review;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
     
 }

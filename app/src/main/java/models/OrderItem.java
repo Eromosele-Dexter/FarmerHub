@@ -6,6 +6,8 @@ package models;
 // if customerId and dateordered are the same, then it is in the same order list
 
 public class OrderItem {
+
+    private int id;
     
     private int itemId;
 
@@ -17,12 +19,22 @@ public class OrderItem {
 
     private String dateOrdered;
 
+    private boolean hasBeenPurchased;
+
     public OrderItem(int itemId, int customerId, int quantity, double price, String date) {
         this.itemId = itemId;
         this.customerId = customerId;
         this.quantity = quantity;
         this.price = price;
         this.dateOrdered = date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getItemId() {
@@ -64,5 +76,14 @@ public class OrderItem {
     public void setDateOrdered(String dateOrdered) {
         this.dateOrdered = dateOrdered;
     }
+
+    public boolean hasBeenPurchased() {
+        return hasBeenPurchased;
+    }
+
+    public void setHasBeenPurchased(boolean hasBeenPurchased) {
+        this.hasBeenPurchased = hasBeenPurchased;
+    }
+
 
 }
