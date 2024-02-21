@@ -15,16 +15,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Item;
 
 public class UploadItemPage {
 
-    public UploadItemPage(Stage stage) {
-        this(stage, null);
-    }
 
-    public UploadItemPage(Stage stage, Item item) {
+    public UploadItemPage(Stage stage, Item item, int userId) {
         stage.setTitle(item == null ? "Farmers Hub - Upload Item" : "Farmers Hub - Edit Item");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -57,6 +55,11 @@ public class UploadItemPage {
         priceBox.setAlignment(Pos.CENTER_LEFT);
         Label dollarSign = new Label("$");
         dollarSign.setFont(new Font("Arial", 14));
+        itemPriceField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                itemPriceField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
         
         
         itemPriceField.setPrefWidth(100); 
@@ -115,16 +118,24 @@ public class UploadItemPage {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(uploadButton);
         grid.add(hbBtn, 0,13); // Adjust grid placement for button
+
+        Text actionTarget = new Text();
+        actionTarget.setStyle("-fx-font-size: 14px; -fx-fill: #ff0000;");
+        grid.add(actionTarget, 0, 14);
         
-        // ADD EVENT HANDLER FOR UPLOAD BUTTON
-        // uploadButton.setOnAction(ItemController.onUploadButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, stage));
-        
-        
+        uploadButton.setOnAction(
+            item == null ?
+            ItemController.createItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget) :
+            ItemController.updateItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget)
+        );
+
         if (item != null) {
             ItemController.handleSetItemProperties(item.getId(), itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox);
         }
 
-        Scene scene = new Scene(grid, 450, 700); // Adjusted scene size for layout
+        	
+
+        Scene scene = new Scene(grid, 450, 700); 
         stage.setScene(scene);
         stage.show();
     }

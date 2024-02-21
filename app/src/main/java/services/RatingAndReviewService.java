@@ -70,7 +70,7 @@ public class RatingAndReviewService {
     }
 
     private RatingAndReviewResponse mapToRatingAndReviewResponse(RatingAndReview ratingAndReview) {
-        User user = userService.getUserById(ratingAndReview.getCustomerId());
+        User user = userService.handleGetUserById(ratingAndReview.getCustomerId());
         return new RatingAndReviewResponse(
                 ratingAndReview.getId(),
                 ratingAndReview.getOrderItemId(),

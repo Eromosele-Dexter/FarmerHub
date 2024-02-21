@@ -46,7 +46,11 @@ public class RegistrationController {
 					String password = pwBox.getText();
 					String role = cb.getValue();
 
-					userService.handleRegisterUser(firstName, lastName, userName, password, role, actionTarget);
+					boolean isValid = userService.handleRegisterUser(firstName, lastName, userName, password, role, actionTarget);
+
+					if(!isValid) {
+						return;
+					}
 
 					PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
 

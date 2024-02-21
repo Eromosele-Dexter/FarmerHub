@@ -4,64 +4,123 @@ import java.util.List;
 
 import controllers.ItemController;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Item;
+import models.Machine;
 import models.User;
+import repositories.userRepository.UserRepository;
+import services.UserService;
 
 public class FarmerLandingPage {
-	private ObservableList<Item> items; 
 
-	public FarmerLandingPage(Stage stage, int userId) {
-		stage.setTitle("Farmers Hub - View Items");
-				VBox vbox = new VBox();
-				vbox.setPadding(new Insets(10));
-				vbox.setSpacing(8);
 
-				System.out.println("hi1");
+	    public FarmerLandingPage(Stage stage, User user) {
+		int userId = user.getId();
+        stage.setTitle("Farmers Hub - View Items");
 
-				List<Item> fetchedItems = ItemController.handleGetItemsByFarmerId(userId);
+		        // Top bar for greeting and add item link
+        HBox topBar = new HBox();
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.setPadding(new Insets(15));
+        topBar.setSpacing(10);
+        
+        Label greeting = new Label("Hi " + user.getFirstName()+"! 👋");
+        greeting.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;-fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
 
-				items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems): FXCollections.observableArrayList(); // Assuming you have such a method
+        Hyperlink addItemLink = new Hyperlink("Add item");
+        addItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
+        HBox.setMargin(addItemLink, new Insets(0, 0, 0, 50)); // Adjust as needed
+        addItemLink.setStyle("-fx-font-size: 16px;");
+        
+        topBar.getChildren().addAll(greeting, addItemLink);
+        HBox rightAlign = new HBox(addItemLink);
+        rightAlign.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(rightAlign, javafx.scene.layout.Priority.ALWAYS);
+        topBar.getChildren().add(rightAlign);
+        
+        // Main container VBox inside the ScrollPane
+        VBox vbox = new VBox();
+        vbox.setPadding(new Insets(10));
+        vbox.setSpacing(8);
 
-				for (Item item : items) {
-					HBox itemBox = new HBox(10);
-					itemBox.setAlignment(Pos.CENTER_LEFT);
+        List<Item> fetchedItems = ItemController.handleGetItemsByFarmerId(userId);
+        List<Item> items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems) : FXCollections.observableArrayList();
 
-					Label itemName = new Label(item.getName());
-					Button updateButton = new Button("Update");
-					Button deleteButton = new Button("Delete");
+        for (Item item : items) {
+            VBox card = new VBox(10);
+            card.setPadding(new Insets(15));
+            card.setStyle("-fx-border-color: lightgrey; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #f9f9f9;");
 
-					updateButton.setOnAction(e -> showUpdateItemPage(stage, item));
-					deleteButton.setOnAction(e -> {
-						ItemController.deleteItem(item);
-						vbox.getChildren().remove(itemBox); // Remove the item's HBox from the VBox
-					});
+            Label itemName = new Label("Name: " + item.getName());
+            itemName.setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em; -fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
+            Label itemDescription = new Label("Description: " + item.getDescription());
+            Label itemPrice = new Label("Price: $" + item.getPrice());
+            Label itemQuantity = new Label("Quantity Available: " + item.getQuantityAvailable());
 
-					itemBox.getChildren().addAll(itemName, updateButton, deleteButton);
-					vbox.getChildren().add(itemBox);
-				}
+            Label itemCondition = null;
+            if (item instanceof Machine) {
+                Machine machine = (Machine) item;
+                itemCondition = new Label("Condition: " + machine.getCondition());
+            }
 
-				Scene scene = new Scene(vbox, 400, 600);
-				stage.setScene(scene);
-				stage.show();
+            Button updateButton = new Button("Update");
+            Button deleteButton = new Button("Delete");
+
+            HBox buttonsBox = new HBox(10);
+            buttonsBox.setAlignment(Pos.CENTER_RIGHT);
+            buttonsBox.getChildren().addAll(updateButton, deleteButton);
+
+            updateButton.setOnAction(e -> showUpdateItemPage(stage, item, userId));
+            deleteButton.setOnAction(e -> {
+                ItemController.deleteItem(item);
+                vbox.getChildren().remove(card); 
+            });
+
+            card.getChildren().addAll(itemName, itemDescription, itemPrice, itemQuantity);
+
+            if (itemCondition != null) {
+                card.getChildren().add(itemCondition);
+            }
+
+            card.getChildren().add(buttonsBox);
+            vbox.getChildren().add(card);
+        }
+
+
+        // ScrollPane to make the VBox scrollable
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(vbox);
+        scrollPane.setFitToWidth(true); 
+        scrollPane.setPadding(new Insets(10));
+
+		BorderPane root = new BorderPane();
+        root.setTop(topBar);
+        root.setCenter(scrollPane);
+
+        // Setting the scrollPane as the scene root
+        Scene scene = new Scene(root, 400, 600);
+        stage.setScene(scene);
+        stage.show();
     }
 
-    private void showUpdateItemPage(Stage stage, Item item) {
-        // Assuming UploadItemPage has been modified to accept an Item object for editing
-        new UploadItemPage(stage, item);
+    private void showUpdateItemPage(Stage stage, Item item, int userId) {
+
+        new UploadItemPage(stage, item, userId);
     }
 
+	private void showUploadItemPage(Stage stage, int userId) {
+   
+        new UploadItemPage(stage, null, userId);
+    }
 }

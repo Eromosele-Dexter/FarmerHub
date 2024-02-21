@@ -16,18 +16,18 @@ public class UserService {
         
     }
 
-    public User getUserById(int id) {
+    public User handleGetUserById(int id) {
         return userRepository.getUserById(id);
     }
 
-    public void handleRegisterUser(String firstName, String lastName, String userName, String password, String role, Text actionTarget) {
+    public boolean handleRegisterUser(String firstName, String lastName, String userName, String password, String role, Text actionTarget) {
         String validationMessage = validateUserRegistration(firstName, lastName, userName, password, role);
 
         if (!validationMessage.isEmpty()) {
 
             actionTarget.setText(validationMessage);
 
-            return ; 
+            return false; 
         }
 
         User newUser = null;
@@ -43,12 +43,14 @@ public class UserService {
 
         if (user != null) {
             actionTarget.setText("User already exists");
-            return;
+            return false;
         }
 
         userRepository.createUser(newUser);
 
-        actionTarget.setText("Registration Successful");		
+        actionTarget.setText("Registration Successful");	
+        
+        return true;
     }
     
     public User handleUserLogin(String username, String password) {

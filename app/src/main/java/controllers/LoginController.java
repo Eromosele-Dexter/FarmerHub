@@ -15,7 +15,7 @@ import services.UserService;
 import views.RegistrationPageView;
 import views.customerViews.CustomerLandingPage;
 import views.farmerViews.FarmerLandingPage;
-import views.farmerViews.UploadItemPage;
+
 
 
 public class LoginController {
@@ -48,12 +48,13 @@ public class LoginController {
 					actionTarget.setText("Login successful");
 
 					if(user instanceof Farmer) {
-						new FarmerLandingPage(stage, user.getId());
+						new FarmerLandingPage(stage, user);
 		
 						return;
 					}
 					else if (user instanceof Customer) {
-						CustomerLandingPage customerLandingPage = new CustomerLandingPage(stage);
+						 new CustomerLandingPage(stage);
+
 						return;
 					}
 
@@ -80,7 +81,7 @@ public class LoginController {
 
 			@Override
 			public void handle(ActionEvent event) {
-				 RegistrationPageView registrationPage = new RegistrationPageView(stage);
+				 new RegistrationPageView(stage);
 			}
 
 		};

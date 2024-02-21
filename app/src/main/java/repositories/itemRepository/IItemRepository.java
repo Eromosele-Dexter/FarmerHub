@@ -22,6 +22,6 @@ public interface IItemRepository {
 
     List<Item>getItemsByIds(List<Integer> itemIds);
 
-
+    Item getItemByFarmerIdAndName(int farmerId, String name);
     
 } 

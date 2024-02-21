@@ -17,7 +17,7 @@ public class ItemRespository implements IItemRepository{
    
     public void createItem(Item item) {
 
-        boolean itemExistsForFarmer = getitemByFarmerIdAndName(item.getFarmerId(), item.getName()) != null;
+        boolean itemExistsForFarmer = getItemByFarmerIdAndName(item.getFarmerId(), item.getName()) != null;
 
         if (itemExistsForFarmer) {
            updateItem(item);
@@ -151,7 +151,7 @@ public class ItemRespository implements IItemRepository{
             sql += ", condition = ?";
         }
     
-        sql += " WHERE farmer_id = ?";
+        sql += " WHERE id = ?";
     
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
 
@@ -170,7 +170,7 @@ public class ItemRespository implements IItemRepository{
             } else if (item instanceof Produce) {
                 pstmt.setString(5, "PRODUCE");
                 pstmt.setNull(6, java.sql.Types.VARCHAR);
-                pstmt.setInt(7, item.getFarmerId());
+                pstmt.setInt(7, item.getId());
             } else {
                 throw new IllegalArgumentException("Unhandled type of Item");
             }
@@ -216,7 +216,7 @@ public class ItemRespository implements IItemRepository{
 
     }
 
-    public Item getitemByFarmerIdAndName(int farmerId, String name) {
+    public Item getItemByFarmerIdAndName(int farmerId, String name) {
         String sql = "SELECT * FROM items WHERE farmer_id = ? AND name = ?";
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
@@ -253,7 +253,6 @@ public class ItemRespository implements IItemRepository{
 
             ResultSet rs = pstmt.executeQuery();
 
-            System.out.println("reached");
 
             while (rs.next()) {
                 Item item = parseItem(rs);
@@ -269,9 +268,9 @@ public class ItemRespository implements IItemRepository{
         return items;
     }
 
+
     private Item parseItem(ResultSet rs) throws SQLException{
-        System.out.println("reached parse item");
-        
+
         String type = rs.getString("type");
         if ("MACHINE".equals(type)) {
             Machine machine =  new Machine(
@@ -301,5 +300,7 @@ public class ItemRespository implements IItemRepository{
             throw new SQLException("Unknown type of item");
         }
     }
+
+
 }
 

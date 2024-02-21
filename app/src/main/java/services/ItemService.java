@@ -17,14 +17,14 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
-    public void handleCreateItem(String name, String description, double price, int quantity, String type, int farmerId, Text actionTarget, String condition) {
-        String validationMessage = validateCreateItem(name, description, price, quantity, type);
+    public boolean handleCreateItem(String name, String description, double price, int quantity, String type, int farmerId, Text actionTarget, String condition) {
+        String validationMessage = validateUpsertItem(name, description, price, quantity, type, condition);
 
         if (!validationMessage.isEmpty()) {
 
             actionTarget.setText(validationMessage);
 
-            return;
+            return false;
         }
 
         Item newItem = null;
@@ -39,30 +39,43 @@ public class ItemService {
         itemRepository.createItem(newItem);
 
         actionTarget.setText("Item Created Successfully");
+
+        return true;
+        
     }
 
-    public void handleUpdateItem(String name, String description, double price, int quantity, String type, int farmerId, Text actionTarget, String condition) {
-        String validationMessage = validateCreateItem(name, description, price, quantity, type);
+    public boolean handleUpdateItem(String name, String description, double price, int quantity, String type, int farmerId, Text actionTarget, String condition) {
+        String validationMessage = validateUpsertItem(name, description, price, quantity, type, condition);
 
         if (!validationMessage.isEmpty()) {
 
             actionTarget.setText(validationMessage);
 
-            return;
+            return false;
         }
 
         Item newItem = null;
 
+        Item fetchedItem = itemRepository.getItemByFarmerIdAndName(farmerId, name);
+
         if(type.toUpperCase().equals(ItemStatics.MACHINE)){
             newItem = new Machine( farmerId, name, description, price, quantity, condition);
+
         }
         else {
             newItem = new Produce(farmerId, name, description, price, quantity);
         }
 
+
+        if(fetchedItem != null){
+            newItem.setId(fetchedItem.getId());
+        }
+
         itemRepository.updateItem(newItem);
 
         actionTarget.setText("Item Updated Successfully");
+
+        return true;
     }
 
 
@@ -82,12 +95,12 @@ public class ItemService {
         return itemRepository.getItemsByIds(itemIds);
     }
     
-    public void handleDeleteItem(Item item, Text actionTarget) {
+    public void handleDeleteItem(Item item) {
         itemRepository.deleteItem(item);
-        actionTarget.setText("Item Deleted Successfully");
+        // actionTarget.setText("Item Deleted Successfully");
     }
 
-    private String validateCreateItem(String name, String description, double price, int quantity, String type) {
+    private String validateUpsertItem(String name, String description, double price, int quantity, String type, String condition) {
         StringBuilder missingFields = new StringBuilder("Missing fields: ");
 
         if (name == null || name.trim().isEmpty()) missingFields.append("\nName, ");
@@ -98,9 +111,15 @@ public class ItemService {
 
         if (quantity <= 0) missingFields.append("\nQuantity, ");
 
-        if (type == null || type.trim().isEmpty()) missingFields.append("\nType, ");
 
-               if (missingFields.length() > "Missing fields: ".length()) {
+        if (type == null || type.trim().isEmpty()) {missingFields.append("\nType, ");}
+
+        if (type != null && type.toUpperCase().equals(ItemStatics.MACHINE) && (condition == null || condition.trim().isEmpty())) {missingFields.append("\nCondition, ");}
+
+
+        System.out.println("Type: " + type);
+
+        if (missingFields.length() > "Missing fields: ".length()) {
 
             missingFields.setLength(missingFields.length() - 2);
 
