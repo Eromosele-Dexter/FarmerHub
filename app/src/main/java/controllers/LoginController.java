@@ -48,8 +48,8 @@ public class LoginController {
 					actionTarget.setText("Login successful");
 
 					if(user instanceof Farmer) {
-					//TODO: uncomment	// FarmerLandingPage farmerLandingPage = new FarmerLandingPage(stage);
-					UploadItemPage uploadItemPage = new UploadItemPage(stage);
+						new FarmerLandingPage(stage, user.getId());
+		
 						return;
 					}
 					else if (user instanceof Customer) {

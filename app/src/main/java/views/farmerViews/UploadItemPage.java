@@ -2,6 +2,7 @@ package views.farmerViews;
 
 
 
+import controllers.ItemController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,10 +16,16 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import models.Item;
 
 public class UploadItemPage {
+
     public UploadItemPage(Stage stage) {
-       stage.setTitle("Farmers Hub - Upload Item");
+        this(stage, null);
+    }
+
+    public UploadItemPage(Stage stage, Item item) {
+        stage.setTitle(item == null ? "Farmers Hub - Upload Item" : "Farmers Hub - Edit Item");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -102,7 +109,8 @@ public class UploadItemPage {
         });
         
         // Upload Button
-        Button uploadButton = new Button("Upload");
+        String buttonText = item == null ? "Upload" : "Update";
+        Button uploadButton = new Button(buttonText);
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(uploadButton);
@@ -111,6 +119,11 @@ public class UploadItemPage {
         // ADD EVENT HANDLER FOR UPLOAD BUTTON
         // uploadButton.setOnAction(ItemController.onUploadButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, stage));
         
+        
+        if (item != null) {
+            ItemController.handleSetItemProperties(item.getId(), itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox);
+        }
+
         Scene scene = new Scene(grid, 450, 700); // Adjusted scene size for layout
         stage.setScene(scene);
         stage.show();

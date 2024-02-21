@@ -253,10 +253,14 @@ public class ItemRespository implements IItemRepository{
 
             ResultSet rs = pstmt.executeQuery();
 
+            System.out.println("reached");
+
             while (rs.next()) {
                 Item item = parseItem(rs);
 
                 items.add(item);
+
+                System.out.println("Item: " + item.getName());
             }
 
         } catch (SQLException e) {
@@ -266,6 +270,8 @@ public class ItemRespository implements IItemRepository{
     }
 
     private Item parseItem(ResultSet rs) throws SQLException{
+        System.out.println("reached parse item");
+        
         String type = rs.getString("type");
         if ("MACHINE".equals(type)) {
             Machine machine =  new Machine(
