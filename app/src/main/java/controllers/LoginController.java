@@ -12,9 +12,10 @@ import models.Farmer;
 import models.User;
 import repositories.userRepository.UserRepository;
 import services.UserService;
-import views.CustomerLandingPage;
-import views.FarmerLandingPage;
 import views.RegistrationPageView;
+import views.customerViews.CustomerLandingPage;
+import views.farmerViews.FarmerLandingPage;
+import views.farmerViews.UploadItemPage;
 
 
 public class LoginController {
@@ -47,7 +48,8 @@ public class LoginController {
 					actionTarget.setText("Login successful");
 
 					if(user instanceof Farmer) {
-						FarmerLandingPage farmerLandingPage = new FarmerLandingPage(stage);
+					//TODO: uncomment	// FarmerLandingPage farmerLandingPage = new FarmerLandingPage(stage);
+					UploadItemPage uploadItemPage = new UploadItemPage(stage);
 						return;
 					}
 					else if (user instanceof Customer) {
