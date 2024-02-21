@@ -118,6 +118,31 @@ public class ItemRespository implements IItemRepository{
         return null;
     }
 
+    public List<Item> getItemsByIds(List<Integer> itemIds) {
+        String sql = "SELECT * FROM items WHERE id = ANY(?)";
+
+        List<Item> items = new ArrayList<>();
+
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setArray(1, conn.createArrayOf("INTEGER", itemIds.toArray()));
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Item item = parseItem(rs);
+
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return items;
+    }
+    
     public void updateItem(Item item) {
 
         String sql = "UPDATE items SET name = ?, description = ?, price = ?, quantity_available = ?, type = ?";

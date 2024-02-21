@@ -1,12 +1,12 @@
 
 import javafx.stage.Stage;
+import mockDB.StubDB;
 import utils.DatabaseSeedingUtil;
 import views.LoginView;
 
 import java.io.IOException;
 
 import controllers.LoginController;
-import database.StubDB;
 
 public class ApplicationRunner extends javafx.application.Application {
 	static LoginController loginController = new LoginController();

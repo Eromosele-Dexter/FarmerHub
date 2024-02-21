@@ -20,6 +20,8 @@ public interface IItemRepository {
 
     List<Item> getItemsByFarmerId(int farmerId);
 
+    List<Item>getItemsByIds(List<Integer> itemIds);
+
 
     
 } 

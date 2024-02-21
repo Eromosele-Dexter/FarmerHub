@@ -78,6 +78,10 @@ public class ItemService {
         return itemRepository.getAllItems();
     }
 
+    public List<Item> handleGetItemsByIds(List<Integer> itemIds) {
+        return itemRepository.getItemsByIds(itemIds);
+    }
+    
     public void handleDeleteItem(Item item, Text actionTarget) {
         itemRepository.deleteItem(item);
         actionTarget.setText("Item Deleted Successfully");
