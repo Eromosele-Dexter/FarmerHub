@@ -1,41 +1,51 @@
 package services;
 
+import java.util.Date;
 import java.util.List;
-import models.Order;
-import repositories.orderRepository.IOrderRespository;
-
+import models.OrderItem;
+import repositories.orderItemRepository.IOrderItemRepository;
 
 public class OrderService {
-    private IOrderRespository orderRepository;
+    private IOrderItemRepository orderItemRepository;
     private ItemService itemService;
 
-    public OrderService(IOrderRespository orderRepository, ItemService itemService) {
-        this.orderRepository = orderRepository;
+    public OrderService(IOrderItemRepository orderItemRepository, ItemService itemService) {
+        this.orderItemRepository = orderItemRepository;
         this.itemService = itemService;
     }
 
-    public void createOrder(int customerId, int[] itemIds, double totalPrice) {
+    public void createOrderItem(int orderId, int itemId, int customerId, int quantity, double price) {
+        OrderItem orderItem = new OrderItem(
+            itemId,
+            customerId,
+            quantity,
+            price,
+            new Date().getTime()+""
+        );
 
-        orderRepository.createOrder(customerId, itemIds, totalPrice);
+        orderItemRepository.createOrderItem(orderItem);
     }
 
-    public List<Order> getOrdersByCustomerId(int customerId) {
-        return orderRepository.getOrdersByCustomerId(customerId);
+    public List<OrderItem> getOrdersByCustomerId(int customerId) {
+        return orderItemRepository.getOrderItemsByCustomerId(customerId);
     }
 
-    public List<Order> getOrders() {
-        itemService.handleGetItemsByIds(null); //TODO
-        return orderRepository.getOrders();
-    }
+    // public List<OrderItem> getOrders() {
+
+     
+    // }
 
     public void deleteOrder(int orderId) {
-        orderRepository.deleteOrder(orderId);
+
     }
 
-    public void updateOrder(int orderId, int customerId, int[] itemIds, double totalPrice) {
-        orderRepository.updateOrder(orderId, customerId, itemIds, totalPrice);
+    public void updateOrder(List<OrderItem> orderItems, String dateTime) {
+ // TODO: update order date time for all orders in order, this is called when order is placed
     }
 
+    public void placeOrder(int customerId, int[] itemIds, int[] quantities) {
+ 
+    }
     
 
 }

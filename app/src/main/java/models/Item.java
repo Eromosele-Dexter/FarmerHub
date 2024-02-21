@@ -1,6 +1,8 @@
 package models;
 
 public class Item {
+
+    protected int id;
     protected int farmerId;
     protected String name;
     protected String description;
@@ -13,6 +15,14 @@ public class Item {
         this.description = description;
         this.price = price;
         this.quantityAvailable = quantityAvailable;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public int getFarmerId() {

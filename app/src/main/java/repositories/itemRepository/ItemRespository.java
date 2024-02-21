@@ -268,7 +268,7 @@ public class ItemRespository implements IItemRepository{
     private Item parseItem(ResultSet rs) throws SQLException{
         String type = rs.getString("type");
         if ("MACHINE".equals(type)) {
-            return new Machine(
+            Machine machine =  new Machine(
                 rs.getInt("farmer_id"),
                 rs.getString("name"),
                 rs.getString("description"),
@@ -276,14 +276,21 @@ public class ItemRespository implements IItemRepository{
                 rs.getInt("quantity_available"),
                 rs.getString("condition") 
             );
+            machine.setId(rs.getInt("id"));
+
+            return machine;
         } else if ("PRODUCE".equals(type)) {
-            return new Produce(
+            Produce produce =  new Produce(
                 rs.getInt("farmer_id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDouble("price"),
                 rs.getInt("quantity_available")
             );
+
+            produce.setId(rs.getInt("id"));
+
+            return produce;
         } else {
             throw new SQLException("Unknown type of item");
         }

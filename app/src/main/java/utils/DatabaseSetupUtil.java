@@ -14,8 +14,8 @@ public class DatabaseSetupUtil {
         createUsersTable();
         dropItemsTable();
         createItemsTable();
-        dropOrdersTable();
-        createOrdersTable();
+        dropOrderItemsTable();
+        createOrderItemsTable();    
     }
 
 
@@ -105,12 +105,13 @@ public class DatabaseSetupUtil {
         }
     }
 
-    public static void createOrdersTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS orders ("
-                + "id SERIAL PRIMARY KEY,"
+    public static void createOrderItemsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS order_items ("
+                + "item_id INT,"
                 + "customer_id INT,"
-                + "item_ids INT[],"
-                + "total_price DECIMAL(10, 2)"
+                + "quantity INT,"
+                + "price DECIMAL(10, 2),"
+                + "date_ordered VARCHAR(255)"
                 + ");";
     
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
@@ -119,15 +120,15 @@ public class DatabaseSetupUtil {
              
             pstmt.executeUpdate();
 
-            System.out.println("Table 'orders' created successfully.");
+            System.out.println("Table 'order_items' created successfully.");
             
         } catch (SQLException e) {
-            System.out.println("Error creating table 'orders': " + e.getMessage());
+            System.out.println("Error creating table 'order_items': " + e.getMessage());
         }
     }
 
-    public static void dropOrdersTable() {
-        String sql = "DROP TABLE IF EXISTS orders";
+    public static void dropOrderItemsTable() {
+        String sql = "DROP TABLE IF EXISTS order_items";
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
         
@@ -135,7 +136,7 @@ public class DatabaseSetupUtil {
              
             stmt.execute(sql);
 
-            System.out.println("Table 'orders' dropped successfully.");
+            System.out.println("Table 'order_items' dropped successfully.");
             
         } catch (SQLException e) {
             System.out.println("An error occurred while dropping the table: " + e.getMessage());
@@ -143,4 +144,5 @@ public class DatabaseSetupUtil {
             e.printStackTrace();
         }
     }
+
 }
