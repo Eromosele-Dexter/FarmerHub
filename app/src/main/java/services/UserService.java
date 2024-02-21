@@ -16,6 +16,10 @@ public class UserService {
         
     }
 
+    public User getUserById(int id) {
+        return userRepository.getUserById(id);
+    }
+
     public void handleRegisterUser(String firstName, String lastName, String userName, String password, String role, Text actionTarget) {
         String validationMessage = validateUserRegistration(firstName, lastName, userName, password, role);
 

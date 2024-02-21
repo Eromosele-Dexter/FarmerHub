@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import models.Item;
 import models.OrderItem;
-import models.OrderItemResponse;
+import models.composite_responses.OrderItemResponse;
 import repositories.orderItemRepository.IOrderItemRepository;
 
 public class OrderService {

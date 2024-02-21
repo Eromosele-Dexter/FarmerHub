@@ -16,6 +16,8 @@ public class DatabaseSetupUtil {
         createItemsTable();
         dropOrderItemsTable();
         createOrderItemsTable();    
+        dropRatingAndReviewTable();
+        createRatingAndReviewTable();
     }
 
 
@@ -107,6 +109,7 @@ public class DatabaseSetupUtil {
 
     public static void createOrderItemsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS order_items ("
+            + "id SERIAL PRIMARY KEY,"
             + "item_id INT,"
             + "customer_id INT,"
             + "quantity INT,"
@@ -147,4 +150,45 @@ public class DatabaseSetupUtil {
         }
     }
 
+    public static void createRatingAndReviewTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS rating_and_reviews ("
+            + "id SERIAL PRIMARY KEY,"
+            + "order_item_id INT,"
+            + "customer_id INT,"
+            + "rating INT,"
+            + "review TEXT,"
+            + "date VARCHAR(255)"
+            + ");";
+
+        
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+        
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             
+            pstmt.executeUpdate();
+
+            System.out.println("Table 'rating_and_reviews' created successfully.");
+            
+        } catch (SQLException e) {
+            System.out.println("Error creating table 'rating_and_reviews': " + e.getMessage());
+        }
+    }
+
+    public static void dropRatingAndReviewTable() {
+        String sql = "DROP TABLE IF EXISTS rating_and_reviews";
+
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+        
+             Statement stmt = conn.createStatement()) {
+             
+            stmt.execute(sql);
+
+            System.out.println("Table 'rating_and_reviews' dropped successfully.");
+            
+        } catch (SQLException e) {
+            System.out.println("An error occurred while dropping the table: " + e.getMessage());
+
+            e.printStackTrace();
+        }
+    }
 }

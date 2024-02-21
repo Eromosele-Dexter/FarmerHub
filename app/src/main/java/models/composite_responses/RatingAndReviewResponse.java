@@ -1,8 +1,8 @@
-package models;
+package models.composite_responses;
 
-public class RatingAndReview {
+public class RatingAndReviewResponse {
 
-    private int id;
+    private int reviewId;
 
     private int orderItemId;
 
@@ -14,20 +14,28 @@ public class RatingAndReview {
 
     private String date;
 
-    public RatingAndReview(int orderItemId, int customerId, int rating, String review, String date) {
+    private String userFirstName;
+
+    private String userLastName;
+
+    public RatingAndReviewResponse(int reviewId, int orderItemId, int customerId, int rating, String review, String date, String userFirstName, String userLastName) {
+        this.reviewId = reviewId;
         this.orderItemId = orderItemId;
         this.customerId = customerId;
         this.rating = rating;
         this.review = review;
         this.date = date;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
     }
 
-    public int getId() {
-        return id;
+
+    public int getReviewId() {
+        return reviewId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setReviewId(int reviewId) {
+        this.reviewId = reviewId;
     }
 
     public int getOrderItemId() {
@@ -37,6 +45,7 @@ public class RatingAndReview {
     public void setOrderItemId(int orderItemId) {
         this.orderItemId = orderItemId;
     }
+
 
     public int getCustomerId() {
         return customerId;
@@ -69,5 +78,23 @@ public class RatingAndReview {
     public void setDate(String date) {
         this.date = date;
     }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
+    }
+
+
     
 }

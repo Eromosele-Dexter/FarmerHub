@@ -1,4 +1,4 @@
-package models;
+package models.composite_responses;
 
 public class OrderItemResponse {
 

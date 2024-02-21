@@ -179,6 +179,8 @@ public class UserRepository implements IUserRepository{
                 rs.getString("last_name"),
                 rs.getString("username"),
                 rs.getString("password"));
+
+            user.setId(rs.getInt("id"));
         }
         else if(role.equals(UserRoles.CUSTOMER)){
             user = new Customer(
@@ -186,6 +188,8 @@ public class UserRepository implements IUserRepository{
                 rs.getString("last_name"),
                 rs.getString("username"),
                 rs.getString("password"));
+
+            user.setId(rs.getInt("id"));
         }
         return user;
     }

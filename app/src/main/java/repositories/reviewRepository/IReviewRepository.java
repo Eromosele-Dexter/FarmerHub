@@ -1,12 +1,21 @@
 package repositories.reviewRepository;
 
+import models.RatingAndReview;
+
 public interface IReviewRepository {
 
-    public void addReview(int orderItemId, int rating, String review);
+    void addRatingAndReview(RatingAndReview ratingAndReview);
 
-    public void updateReview(int orderItemId, int rating, String review);
+    void updateRatingAndReview(RatingAndReview ratingAndReview);
 
-    public void deleteReview(int orderItemId);
+    void deleteRatingAndReview(int id);
 
-    public void getReview(int orderItemId);
+    RatingAndReview getRatingAndReview(int id);
+
+    RatingAndReview[] getAllRatingAndReviewByItemId(int itemId);
+
+    RatingAndReview[] getAllRatingAndReviewByCustomerId(int customerId);
+
+    RatingAndReview[] getAllRatingAndReviewByCustomerIdAndItemId(int customerId, int itemId);
+
 } 
