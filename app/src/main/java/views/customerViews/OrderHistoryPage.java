@@ -65,7 +65,7 @@ public class OrderHistoryPage {
         addReviewLink.setTextFill(Color.BLUE);
         addReviewLink.setOnAction(e -> {
             System.out.println("Navigating to Add Review Page for " + item.getName());
-            new ReviewPage(stage, item.getItemId(), stage.getScene());
+            new ReviewPage(stage, item.getItemId(), stage.getScene(),userId);
         });
 
         itemBox.getChildren().addAll(dateLabel, itemName, quantity, price, addReviewLink);

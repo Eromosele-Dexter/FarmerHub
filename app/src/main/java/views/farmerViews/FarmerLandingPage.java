@@ -24,7 +24,6 @@ public class FarmerLandingPage {
 
 	public FarmerLandingPage(Stage stage, User user) {
 		int userId = user.getId();
-        stage.setTitle("Farmers Hub - View Items");
 
 	    // Top bar for greeting and add item link
         HBox topBar = new HBox();

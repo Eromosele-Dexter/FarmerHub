@@ -17,6 +17,18 @@ public class DateUtils {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm:ss");
 
             return dateTime.format(formatter);
-    }
+        }
+
+        public static String convertEpochToStringWithoutHours(String epochString) {
+            long epoch = Long.parseLong(epochString);
+      
+            Instant instant = Instant.ofEpochMilli(epoch);
+
+            ZonedDateTime dateTime = instant.atZone(ZoneId.of("America/Toronto"));
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+
+            return dateTime.format(formatter);
+        }
 
 }

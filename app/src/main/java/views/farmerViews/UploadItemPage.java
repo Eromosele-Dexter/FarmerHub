@@ -23,7 +23,6 @@ public class UploadItemPage {
 
 
     public UploadItemPage(Stage stage, Item item, int userId) {
-        stage.setTitle(item == null ? "Farmers Hub - Upload Item" : "Farmers Hub - Edit Item");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);

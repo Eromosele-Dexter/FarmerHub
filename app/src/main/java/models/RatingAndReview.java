@@ -4,18 +4,18 @@ public class RatingAndReview {
 
     private int id;
 
-    private int orderItemId;
+    private int itemId;
 
     private int customerId;
 
-    private int rating ; // 1-5
+    private int rating ; 
 
     private String review;
 
     private String date;
 
-    public RatingAndReview(int orderItemId, int customerId, int rating, String review, String date) {
-        this.orderItemId = orderItemId;
+    public RatingAndReview(int itemId, int customerId, int rating, String review, String date) {
+        this.itemId = itemId;
         this.customerId = customerId;
         this.rating = rating;
         this.review = review;
@@ -30,12 +30,12 @@ public class RatingAndReview {
         this.id = id;
     }
 
-    public int getOrderItemId() {
-        return orderItemId;
+    public int getitemId() {
+        return itemId;
     }
 
-    public void setOrderItemId(int orderItemId) {
-        this.orderItemId = orderItemId;
+    public void setitemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public int getCustomerId() {

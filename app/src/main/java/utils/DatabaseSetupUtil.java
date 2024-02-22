@@ -153,7 +153,7 @@ public class DatabaseSetupUtil {
     public static void createRatingAndReviewTable() {
         String sql = "CREATE TABLE IF NOT EXISTS rating_and_reviews ("
             + "id SERIAL PRIMARY KEY,"
-            + "order_item_id INT,"
+            + "item_id INT,"
             + "customer_id INT,"
             + "rating INT,"
             + "review TEXT,"

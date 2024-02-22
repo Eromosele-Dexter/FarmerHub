@@ -99,7 +99,7 @@ public class CustomerLandingPage {
 
             seeReviewsButton.setOnAction(e -> {
 				Scene currentScene = stage.getScene();
-                ReviewController.viewReviews(item, stage, currentScene);
+                ReviewController.viewReviews(item, stage, currentScene, userId);
             });
 
             card.getChildren().addAll(itemName, itemDescription, itemPrice, itemQuantity);

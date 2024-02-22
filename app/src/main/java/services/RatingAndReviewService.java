@@ -1,5 +1,8 @@
 package services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.RatingAndReview;
 import models.User;
 import models.composite_responses.RatingAndReviewResponse;
@@ -16,8 +19,15 @@ public class RatingAndReviewService {
     }
 
 
-    public void addRatingAndReview(RatingAndReview ratingAndReview) {
+    public boolean addRatingAndReview(RatingAndReview ratingAndReview) {
+
+        if(ratingAndReview.getRating() <= 0 || ratingAndReview.getRating() > 5) {
+            return false;
+        }
+
         reviewRepository.addRatingAndReview(ratingAndReview);
+
+        return true;
     }
 
     public void updateRatingAndReview(RatingAndReview ratingAndReview) {
@@ -33,13 +43,13 @@ public class RatingAndReviewService {
         return mapToRatingAndReviewResponse(ratingAndReview);
     }
 
-    public RatingAndReviewResponse[] getAllRatingAndReviewByItemId(int itemId) {
+    public List<RatingAndReviewResponse> getAllRatingAndReviewByItemId(int itemId) {
         RatingAndReview[] ratingAndReviews = reviewRepository.getAllRatingAndReviewByItemId(itemId);
 
-        RatingAndReviewResponse[] ratingAndReviewResponses = new RatingAndReviewResponse[ratingAndReviews.length];
+        List<RatingAndReviewResponse> ratingAndReviewResponses = new ArrayList<>();
 
-        for (int i = 0; i < ratingAndReviews.length; i++) {
-            ratingAndReviewResponses[i] = mapToRatingAndReviewResponse(ratingAndReviews[i]);
+        for (RatingAndReview ratingAndReview : ratingAndReviews) {
+            ratingAndReviewResponses.add(mapToRatingAndReviewResponse(ratingAndReview));
         }
 
         return ratingAndReviewResponses;
@@ -73,7 +83,7 @@ public class RatingAndReviewService {
         User user = userService.handleGetUserById(ratingAndReview.getCustomerId());
         return new RatingAndReviewResponse(
                 ratingAndReview.getId(),
-                ratingAndReview.getOrderItemId(),
+                ratingAndReview.getitemId(),
                 ratingAndReview.getCustomerId(),
                 ratingAndReview.getRating(),
                 ratingAndReview.getReview(),

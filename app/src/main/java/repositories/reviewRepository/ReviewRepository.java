@@ -12,12 +12,12 @@ import models.RatingAndReview;
 public class ReviewRepository implements IReviewRepository{
 
     public void addRatingAndReview(RatingAndReview ratingAndReview) {
-        String sql = "INSERT INTO rating_and_reviews (order_item_id, customer_id, rating, review, date) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO rating_and_reviews (item_id, customer_id, rating, review, date) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, ratingAndReview.getOrderItemId());
+            pstmt.setInt(1, ratingAndReview.getitemId());
             pstmt.setInt(2, ratingAndReview.getCustomerId());
             pstmt.setInt(3, ratingAndReview.getRating());
             pstmt.setString(4, ratingAndReview.getReview());
@@ -42,7 +42,7 @@ public class ReviewRepository implements IReviewRepository{
 
             if (rs.next()) {
                 ratingAndReview = new RatingAndReview(
-                    rs.getInt("order_item_id"),
+                    rs.getInt("item_id"),
                     rs.getInt("customer_id"),
                     rs.getInt("rating"),
                     rs.getString("review"),
@@ -57,7 +57,7 @@ public class ReviewRepository implements IReviewRepository{
     }
 
     public RatingAndReview[] getAllRatingAndReviewByItemId(int itemId) {
-        String sql = "SELECT * FROM rating_and_reviews WHERE order_item_id = ?";
+        String sql = "SELECT * FROM rating_and_reviews WHERE item_id = ?";
         List<RatingAndReview> ratingAndReviews = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
@@ -68,7 +68,7 @@ public class ReviewRepository implements IReviewRepository{
 
             while (rs.next()) {
                 RatingAndReview ratingAndReview = new RatingAndReview(
-                    rs.getInt("order_item_id"),
+                    rs.getInt("item_id"),
                     rs.getInt("customer_id"),
                     rs.getInt("rating"),
                     rs.getString("review"),
@@ -95,7 +95,7 @@ public class ReviewRepository implements IReviewRepository{
 
             while (rs.next()) {
                 RatingAndReview ratingAndReview = new RatingAndReview(
-                    rs.getInt("order_item_id"),
+                    rs.getInt("item_id"),
                     rs.getInt("customer_id"),
                     rs.getInt("rating"),
                     rs.getString("review"),
@@ -111,7 +111,7 @@ public class ReviewRepository implements IReviewRepository{
     }
 
     public RatingAndReview[] getAllRatingAndReviewByCustomerIdAndItemId(int customerId, int itemId) {
-        String sql = "SELECT * FROM rating_and_reviews WHERE customer_id = ? AND order_item_id = ?";
+        String sql = "SELECT * FROM rating_and_reviews WHERE customer_id = ? AND item_id = ?";
         List<RatingAndReview> ratingAndReviews = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
@@ -123,7 +123,7 @@ public class ReviewRepository implements IReviewRepository{
 
             while (rs.next()) {
                 RatingAndReview ratingAndReview = new RatingAndReview(
-                    rs.getInt("order_item_id"),
+                    rs.getInt("item_id"),
                     rs.getInt("customer_id"),
                     rs.getInt("rating"),
                     rs.getString("review"),

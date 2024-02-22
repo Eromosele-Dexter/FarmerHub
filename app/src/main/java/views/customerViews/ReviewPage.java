@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controllers.ItemController;
+import controllers.ReviewController;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,11 +18,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.composite_responses.RatingAndReviewResponse;
+import utils.DateUtils;
 
 public class ReviewPage {
 
-    public ReviewPage(Stage stage, int itemId, Scene previousScene) {
-        stage.setTitle("Reviews Page");
+    public ReviewPage(Stage stage, int itemId, Scene previousScene, int userId) {
        
 
         HBox topBar = new HBox();
@@ -51,16 +52,16 @@ public class ReviewPage {
         pageTitle.setText("Reviews for " + itemName);
 
 
-        List<RatingAndReviewResponse> reviews = getReviewsForItem(itemId);
+        List<RatingAndReviewResponse> reviews = ReviewController.getAllReviewsByItemId(itemId);
 
         for (RatingAndReviewResponse review : reviews) {
             VBox reviewBox = new VBox(5);
             reviewBox.setPadding(new Insets(10));
             reviewBox.setStyle("-fx-border-color: #cccccc; -fx-border-radius: 5; -fx-background-color: #f8f8f8;");
             
-            Label reviewerName = new Label(review.getUserFirstName() + " " + review.getUserLastName());
-            Label reviewDate = new Label(review.getDate());
-            Label rating = new Label("Rating: " + review.getRating());
+            Label reviewerName = new Label("👤 " + review.getUserFirstName() + " " + review.getUserLastName() );
+            Label reviewDate = new Label("Date added 📅: " + DateUtils.convertEpochToStringWithoutHours(review.getDate()));
+            Label rating = new Label("Rating ⭐: " + review.getRating() +" / 5");
             
             Label reviewText = new Label(review.getReview());
             reviewText.setWrapText(true); // Enable text wrapping
@@ -90,11 +91,7 @@ public class ReviewPage {
 
         Button submitReviewButton = new Button("Submit Review");
 
-        submitReviewButton.setOnAction(e -> {
-            // Logic to submit review
-            System.out.println("Review submitted!");
-            // Implement the submission logic here, and refresh the reviews list accordingly
-        });
+        submitReviewButton.setOnAction(ReviewController.submitReview(ratingInput, reviewInput, stage, itemId, userId, previousScene));
 
         mainLayout.getChildren().addAll(new Label("Add Your Review:"), ratingInput, reviewInput, submitReviewButton);
 
@@ -102,16 +99,16 @@ public class ReviewPage {
         Platform.runLater(() -> stage.setScene(scene));
     }
 
-        private List<RatingAndReviewResponse> getReviewsForItem(int itemId) {
+        // private List<RatingAndReviewResponse> getReviewsForItem(int itemId) {
 
-            List<RatingAndReviewResponse> mockReviews = new ArrayList<>();
+        //     List<RatingAndReviewResponse> mockReviews = new ArrayList<>();
 
-            mockReviews.add(new RatingAndReviewResponse(1, itemId, 1, 4, "Great product, loved it!", "2023-01-01", "John", "Doe"));
+        //     mockReviews.add(new RatingAndReviewResponse(1, itemId, 1, 4, "Great product, loved it!", "2023-01-01", "John", "Doe"));
 
-            mockReviews.add(new RatingAndReviewResponse(2, itemId, 2, 5, "Absolutely amazing! Remove all comments in project ejhhje  dhjdj ch ch djc hcb  cjcdbjud ", "2023-01-02", "Jane", "Doe"));
+        //     mockReviews.add(new RatingAndReviewResponse(2, itemId, 2, 5, "Absolutely amazing! Remove all comments in project ejhhje  dhjdj ch ch djc hcb  cjcdbjud ", "2023-01-02", "Jane", "Doe"));
 
-            return mockReviews;
-        }
+        //     return mockReviews;
+        // }
 
     private void goBack(Stage stage, Scene previousScene) {
         stage.setScene(previousScene);
