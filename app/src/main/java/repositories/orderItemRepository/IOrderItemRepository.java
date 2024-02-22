@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IOrderItemRepository {
     void createOrderItem(OrderItem orderItem);
-    OrderItem getOrderItemByItemIdAndCustomerId(int itemId, int customerId);
+    OrderItem getOrderItemByItemIdAndCustomerIdAndHasNotBeenPurchased(int itemId, int customerId);
     List<OrderItem> getOrderItemsByCustomerId(int customerId);
     List<OrderItem>getOrderItemsByItemIds(List<Integer> itemIds);
     void updateOrderItem(OrderItem orderItem);

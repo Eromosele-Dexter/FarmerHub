@@ -19,15 +19,18 @@ public class OrderService {
     }
 
     public void createOrderItem(int itemId, int customerId, int quantity, double price) {
-        OrderItem orderItem = new OrderItem(
-            itemId,
-            customerId,
-            quantity,
-            price,
-            new Date().getTime()+""
-        );
 
-        orderItemRepository.createOrderItem(orderItem);
+        OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerIdAndHasNotBeenPurchased(itemId, customerId);
+
+        if(orderItem != null){
+            orderItem.setQuantity(orderItem.getQuantity() + quantity);
+            orderItem.setDateOrdered(new Date().getTime()+"");
+            orderItemRepository.updateOrderItem(orderItem);
+
+        } else {
+            orderItem = new OrderItem(itemId, customerId, quantity, price, new Date().getTime()+"");
+            orderItemRepository.createOrderItem(orderItem);
+        }
     }
 
     public List<OrderItemResponse> getCustomerCart(int customerId) {
@@ -71,11 +74,11 @@ public class OrderService {
         return orderItemResponses;
     }
 
-    public OrderItemResponse getOrderItemByItemIdAndCustomerId(int itemId, int customerId) {
-        OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerId(itemId, customerId);
+    // public OrderItemResponse getOrderItemByItemIdAndCustomerId(int itemId, int customerId) {
+    //     OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerId(itemId, customerId);
 
-        return getOrderItemResponse(orderItem);     
-    }
+    //     return getOrderItemResponse(orderItem);     
+    // }
 
     public void updateOrder(List<OrderItem> orderItems, String dateTime) {
 
@@ -87,27 +90,24 @@ public class OrderService {
         }
     }
 
-    public void placeOrder(int customerId, int[] itemIds, int[] quantities) {
+    public void placeOrder(int customerId) {
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-        for (int i = 0; i < itemIds.length; i++) {
-            Item item = itemService.handleGetItemById(itemIds[i]);
+        List<OrderItem> customerCart = orderItemRepository.getOrderItemsByCustomerId(customerId);
 
-            if (item.getQuantityAvailable() < quantities[i]) {
-                throw new IllegalArgumentException("Not enough items in stock for item: " + item.getName() + " to fulfill order.");
+        HashMap<Integer, OrderItemResponse> orderItemMap = new HashMap<Integer, OrderItemResponse>();
+
+        for (OrderItem orderItem : customerCart) {
+            if(!orderItem.hasBeenPurchased()){
+
+                if(orderItemMap.containsKey(orderItem.getItemId())){
+                    OrderItemResponse orderItemResponse = orderItemMap.get(orderItem.getItemId());
+                    orderItemResponse.setQuantity(orderItemResponse.getQuantity() + orderItem.getQuantity());
+
+                } else {
+                    orderItemMap.put(orderItem.getItemId(), getOrderItemResponse(orderItem));
+                }
             }
-
-            OrderItem orderItem = new OrderItem(
-                itemIds[i],
-                customerId,
-                quantities[i],
-                item.getPrice(),
-                new Date().getTime()+""
-            );
-
-            orderItem.setHasBeenPurchased(true);
-
-            orderItems.add(orderItem);
         }
 
         updateOrder(orderItems, new Date().getTime()+"");

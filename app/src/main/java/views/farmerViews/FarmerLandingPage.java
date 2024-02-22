@@ -35,11 +35,6 @@ public class FarmerLandingPage {
         Label greeting = new Label("Hi " + user.getFirstName()+"! 👋");
         greeting.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;-fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
 
-        // Hyperlink addItemLink = new Hyperlink("Add item");
-        // addItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
-        // HBox.setMargin(addItemLink, new Insets(0, 0, 0, 50)); 
-        // addItemLink.setStyle("-fx-font-size: 16px;");
-
         // Links container to group Order History and Cart, aligned at the top right
 		HBox linksContainer = new HBox(5); // Spacing of 5px between links
 		linksContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -106,7 +101,6 @@ public class FarmerLandingPage {
             card.getChildren().add(buttonsBox);
             vbox.getChildren().add(card);
         }
-
 
         // ScrollPane to make the VBox scrollable
         ScrollPane scrollPane = new ScrollPane();

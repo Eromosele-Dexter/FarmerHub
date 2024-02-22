@@ -132,5 +132,13 @@ public class ItemController {
 
         return items.isEmpty() ? null :  items;
     }
+
+    public static Item getItemById(int itemId) {
+        ItemService itemService = new ItemService(new ItemRepository ());
+
+        Item item = itemService.handleGetItemById(itemId);
+
+        return item;
+    }
     
 }

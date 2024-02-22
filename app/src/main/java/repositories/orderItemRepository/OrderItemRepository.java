@@ -31,8 +31,8 @@ public class OrderItemRepository implements IOrderItemRepository {
         }
     }
 
-    public OrderItem getOrderItemByItemIdAndCustomerId(int itemId, int customerId) {
-        String sql = "SELECT * FROM order_items WHERE item_id = ? AND customer_id = ?";
+    public OrderItem getOrderItemByItemIdAndCustomerIdAndHasNotBeenPurchased(int itemId, int customerId) {
+        String sql = "SELECT * FROM order_items WHERE item_id = ? AND customer_id = ? AND has_been_purchased = false";
         OrderItem orderItem = null;
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
@@ -129,7 +129,7 @@ public class OrderItemRepository implements IOrderItemRepository {
     }
     
     public void updateOrderItem(OrderItem orderItem) {
-        String sql = "UPDATE order_items SET quantity = ?, price = ?, date_ordered = ? has_been_purchased = ? WHERE id = ?";
+        String sql = "UPDATE order_items SET quantity = ?, price = ?, date_ordered = ?, has_been_purchased = ? WHERE id = ?";
 
         try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

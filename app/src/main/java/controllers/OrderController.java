@@ -30,5 +30,11 @@ public class OrderController {
 
         orderService.deleteOrderItem(itemId, userId);
     }
+
+    public static void placeOrder(int userId) {
+        OrderService orderService = new OrderService(new OrderItemRepository(), new ItemService(new ItemRepository()));
+
+        orderService.placeOrder(userId);
+    }
     
 }

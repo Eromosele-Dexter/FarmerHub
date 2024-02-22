@@ -3,6 +3,7 @@ package views.customerViews;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.ItemController;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,18 +12,45 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.composite_responses.RatingAndReviewResponse;
 
 public class ReviewPage {
 
-    public ReviewPage(Stage stage, int itemId) {
+    public ReviewPage(Stage stage, int itemId, Scene previousScene) {
+        stage.setTitle("Reviews Page");
+       
+
+        HBox topBar = new HBox();
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.setPadding(new Insets(10));
+        topBar.setSpacing(10);
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> goBack(stage, previousScene));
+
+        Label pageTitle = new Label(); 
+        pageTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
+
+
+        HBox.setHgrow(pageTitle, Priority.ALWAYS);
+        pageTitle.setMaxWidth(Double.MAX_VALUE);
+        pageTitle.setAlignment(Pos.CENTER);
+
+        topBar.getChildren().addAll(backButton, pageTitle);
+
         VBox mainLayout = new VBox(10);
         mainLayout.setPadding(new Insets(15));
-        mainLayout.setAlignment(Pos.TOP_CENTER);
+        mainLayout.getChildren().add(topBar);
 
-        // Mock call to get reviews for the item
+
+        String itemName = ItemController.getItemById(itemId).getName();
+        pageTitle.setText("Reviews for " + itemName);
+
+
         List<RatingAndReviewResponse> reviews = getReviewsForItem(itemId);
 
         for (RatingAndReviewResponse review : reviews) {
@@ -33,18 +61,16 @@ public class ReviewPage {
             Label reviewerName = new Label(review.getUserFirstName() + " " + review.getUserLastName());
             Label reviewDate = new Label(review.getDate());
             Label rating = new Label("Rating: " + review.getRating());
-                        // Using a Label for review text with wrapping enabled
+            
             Label reviewText = new Label(review.getReview());
             reviewText.setWrapText(true); // Enable text wrapping
             
-
-
 
             reviewBox.getChildren().addAll(reviewerName, reviewDate, rating, reviewText);
             mainLayout.getChildren().add(reviewBox);
         }
 
-        // Section to add a new review
+
         TextField ratingInput = new TextField();
         ratingInput.setPromptText("Rating (1-5)");
 
@@ -60,6 +86,7 @@ public class ReviewPage {
 
         TextArea reviewInput = new TextArea();
         reviewInput.setPromptText("Your review");
+        reviewInput.setMaxHeight(100);
 
         Button submitReviewButton = new Button("Submit Review");
 
@@ -76,8 +103,7 @@ public class ReviewPage {
     }
 
         private List<RatingAndReviewResponse> getReviewsForItem(int itemId) {
-            // This method should fetch reviews from your data source based on itemId.
-            // For demonstration, returning mock data.
+
             List<RatingAndReviewResponse> mockReviews = new ArrayList<>();
 
             mockReviews.add(new RatingAndReviewResponse(1, itemId, 1, 4, "Great product, loved it!", "2023-01-01", "John", "Doe"));
@@ -85,6 +111,10 @@ public class ReviewPage {
             mockReviews.add(new RatingAndReviewResponse(2, itemId, 2, 5, "Absolutely amazing! Remove all comments in project ejhhje  dhjdj ch ch djc hcb  cjcdbjud ", "2023-01-02", "Jane", "Doe"));
 
             return mockReviews;
+        }
+
+    private void goBack(Stage stage, Scene previousScene) {
+        stage.setScene(previousScene);
     }
     
 }

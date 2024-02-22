@@ -46,11 +46,11 @@ public class CustomerLandingPage {
 		HBox.setHgrow(linksContainer, javafx.scene.layout.Priority.ALWAYS); // This will push the linksContainer to the right
 
 		Hyperlink orderHistoryLink = new Hyperlink("Order History 📜");
-		orderHistoryLink.setOnAction(e -> showOrderHistoryPage(stage, userId));
+
 		orderHistoryLink.setStyle("-fx-font-size: 16px;");
 
 		Hyperlink goToCartLink = new Hyperlink("Cart 🛒");
-		goToCartLink.setOnAction(e -> showCartPage(stage, userId));
+		
 		goToCartLink.setStyle("-fx-font-size: 16px;");
 
 		// Add both links to the links container
@@ -98,7 +98,8 @@ public class CustomerLandingPage {
 			});
 
             seeReviewsButton.setOnAction(e -> {
-                ReviewController.viewReviews(item, stage);
+				Scene currentScene = stage.getScene();
+                ReviewController.viewReviews(item, stage, currentScene);
             });
 
             card.getChildren().addAll(itemName, itemDescription, itemPrice, itemQuantity);
@@ -122,15 +123,17 @@ public class CustomerLandingPage {
         root.setCenter(scrollPane);
 
         Scene scene = new Scene(root, 400, 600);
+		orderHistoryLink.setOnAction(e -> showOrderHistoryPage(stage, userId, scene));
+		goToCartLink.setOnAction(e -> showCartPage(stage, userId, scene));
         stage.setScene(scene);
         stage.show();
 	}
 
-	private void showOrderHistoryPage(Stage stage, int userId) {
-		new OrderHistoryPage(stage, userId);
+	private void showOrderHistoryPage(Stage stage, int userId, Scene scene) {
+		new OrderHistoryPage(stage, userId, scene);
 	}
 
-	private void showCartPage(Stage stage, int userId) {
-		new CartPage(stage, userId);
+	private void showCartPage(Stage stage, int userId, Scene scene) {
+		new CartPage(stage, userId, scene);
 	}
 }
