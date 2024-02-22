@@ -37,4 +37,13 @@ public class OrderController {
         orderService.placeOrder(userId);
     }
     
+    public static List<OrderItemResponse> viewOrderHistory(int userId) {
+        OrderService orderService = new OrderService(new OrderItemRepository(), new ItemService(new ItemRepository()));
+
+        List<OrderItemResponse> orderItems =  orderService.getOrderHistory(userId);
+
+        System.out.println("Order Items: " + orderItems);
+
+        return orderItems;
+    }
 }

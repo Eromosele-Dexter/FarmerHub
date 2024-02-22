@@ -95,6 +95,8 @@ public class OrderService {
 
         List<OrderItem> customerCart = orderItemRepository.getOrderItemsByCustomerId(customerId);
 
+        System.out.println("Customer Cart: " + customerCart.size());
+
         HashMap<Integer, OrderItemResponse> orderItemMap = new HashMap<Integer, OrderItemResponse>();
 
         for (OrderItem orderItem : customerCart) {
@@ -108,6 +110,20 @@ public class OrderService {
                     orderItemMap.put(orderItem.getItemId(), getOrderItemResponse(orderItem));
                 }
             }
+        }
+
+        System.out.println("Order Item Map: " + orderItemMap.size());
+
+        for (OrderItemResponse orderItemResponse : orderItemMap.values()) {
+            OrderItem orderItem = new OrderItem(orderItemResponse.getItemId(), orderItemResponse.getCustomerId(), orderItemResponse.getQuantity(), orderItemResponse.getPrice(), new Date().getTime()+"");
+
+            orderItem.setId(orderItemResponse.getOrderItemId());
+
+            orderItem.setHasBeenPurchased(true);
+
+            orderItems.add(orderItem);
+
+            System.out.println("Order Item: " + orderItemResponse.getItemId() + " " + orderItemResponse.getCustomerId() + " " + orderItemResponse.getQuantity() + " " + orderItemResponse.getPrice());
         }
 
         updateOrder(orderItems, new Date().getTime()+"");
@@ -134,7 +150,7 @@ public class OrderService {
         return orderItemResponses;
     }
 
-    public List<OrderItemResponse> getPurchaseHistory(int customerId) {
+    public List<OrderItemResponse> getOrderHistory(int customerId) {
         List<OrderItem> orderItems = orderItemRepository.getOrderItemsByCustomerId(customerId);
 
         List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();

@@ -144,7 +144,7 @@ public class OrderItemRepository implements IOrderItemRepository {
             if (affectedRows > 0) {
                 System.out.println("Order item updated successfully.");
             } else {
-                System.out.println("No order item found with provided ID.");
+                System.out.println("No order item found with provided ID: " + orderItem.getId());
             }
         } catch (SQLException e) {
             System.out.println("Error updating order item: " + e.getMessage());
