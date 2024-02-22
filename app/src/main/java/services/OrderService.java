@@ -2,6 +2,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import models.Item;
 import models.OrderItem;
@@ -17,7 +18,7 @@ public class OrderService {
         this.itemService = itemService;
     }
 
-    public void createOrderItem(int orderId, int itemId, int customerId, int quantity, double price) {
+    public void createOrderItem(int itemId, int customerId, int quantity, double price) {
         OrderItem orderItem = new OrderItem(
             itemId,
             customerId,
@@ -29,7 +30,36 @@ public class OrderService {
         orderItemRepository.createOrderItem(orderItem);
     }
 
-    public List<OrderItemResponse> getOrdersByCustomerId(int customerId) {
+    public List<OrderItemResponse> getCustomerCart(int customerId) {
+        List<OrderItem> orderItems = orderItemRepository.getOrderItemsByCustomerId(customerId);
+
+        List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();
+
+        HashMap<Integer, OrderItemResponse> orderItemMap = new HashMap<Integer, OrderItemResponse>();
+
+        for (OrderItem orderItem : orderItems) {
+
+            if(!orderItem.hasBeenPurchased()){
+
+                if(orderItemMap.containsKey(orderItem.getItemId())){
+
+                    OrderItemResponse orderItemResponse = orderItemMap.get(orderItem.getItemId());
+                    orderItemResponse.setQuantity(orderItemResponse.getQuantity() + orderItem.getQuantity());
+
+                } else {
+                    orderItemMap.put(orderItem.getItemId(), getOrderItemResponse(orderItem));
+                }
+            }
+        }
+
+        for (OrderItemResponse orderItemResponse : orderItemMap.values()) {
+            orderItemResponses.add(orderItemResponse);
+        }
+
+        return orderItemResponses;
+    }
+
+    public List<OrderItemResponse> getOrdersByCustomerIdIncludingPurchased(int customerId) {
         List<OrderItem> orderItems = orderItemRepository.getOrderItemsByCustomerId(customerId);
 
         List<OrderItemResponse> orderItemResponses = new ArrayList<OrderItemResponse>();
@@ -115,6 +145,10 @@ public class OrderService {
         }
 
         return orderItemResponses;
+    }
+
+    public void deleteOrderItem(int itemId, int customerId) {
+        orderItemRepository.deleteOrderItem(itemId, customerId);
     }
 
     private OrderItemResponse getOrderItemResponse(OrderItem orderItem) {

@@ -14,22 +14,19 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Item;
 import models.Machine;
 import models.User;
-import repositories.userRepository.UserRepository;
-import services.UserService;
 
 public class FarmerLandingPage {
 
 
-	    public FarmerLandingPage(Stage stage, User user) {
+	public FarmerLandingPage(Stage stage, User user) {
 		int userId = user.getId();
         stage.setTitle("Farmers Hub - View Items");
 
-		        // Top bar for greeting and add item link
+	    // Top bar for greeting and add item link
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setPadding(new Insets(15));
@@ -38,16 +35,29 @@ public class FarmerLandingPage {
         Label greeting = new Label("Hi " + user.getFirstName()+"! 👋");
         greeting.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;-fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
 
-        Hyperlink addItemLink = new Hyperlink("Add item");
-        addItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
-        HBox.setMargin(addItemLink, new Insets(0, 0, 0, 50)); // Adjust as needed
-        addItemLink.setStyle("-fx-font-size: 16px;");
+        // Hyperlink addItemLink = new Hyperlink("Add item");
+        // addItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
+        // HBox.setMargin(addItemLink, new Insets(0, 0, 0, 50)); 
+        // addItemLink.setStyle("-fx-font-size: 16px;");
+
+        // Links container to group Order History and Cart, aligned at the top right
+		HBox linksContainer = new HBox(5); // Spacing of 5px between links
+		linksContainer.setAlignment(Pos.CENTER_RIGHT);
+		HBox.setHgrow(linksContainer, javafx.scene.layout.Priority.ALWAYS); // This will push the linksContainer to the right
+
+		Hyperlink salesHistoryLink = new Hyperlink("Sales History 📜");
+		salesHistoryLink.setOnAction(e -> showSalesHistoryPage(stage, userId));
+		salesHistoryLink.setStyle("-fx-font-size: 16px;");
+
+		Hyperlink uploadItemLink = new Hyperlink("Upload Item 💭");
+		uploadItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
+		uploadItemLink.setStyle("-fx-font-size: 16px;");
         
-        topBar.getChildren().addAll(greeting, addItemLink);
-        HBox rightAlign = new HBox(addItemLink);
-        rightAlign.setAlignment(Pos.CENTER_RIGHT);
-        HBox.setHgrow(rightAlign, javafx.scene.layout.Priority.ALWAYS);
-        topBar.getChildren().add(rightAlign);
+  		// Add both links to the links container
+          linksContainer.getChildren().addAll(salesHistoryLink, uploadItemLink);
+
+          // Add greeting and links container to the top bar
+          topBar.getChildren().addAll(greeting, linksContainer);
         
         // Main container VBox inside the ScrollPane
         VBox vbox = new VBox();
@@ -112,6 +122,10 @@ public class FarmerLandingPage {
         Scene scene = new Scene(root, 400, 600);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void showSalesHistoryPage(Stage stage, int userId) {
+        new SalesHistoryPage(stage, userId);
     }
 
     private void showUpdateItemPage(Stage stage, Item item, int userId) {

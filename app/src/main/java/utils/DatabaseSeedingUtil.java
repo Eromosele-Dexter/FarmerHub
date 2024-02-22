@@ -7,7 +7,7 @@ import models.Machine;
 import models.Produce;
 import models.User;
 import repositories.itemRepository.IItemRepository;
-import repositories.itemRepository.ItemRespository;
+import repositories.itemRepository.ItemRepository;
 import repositories.userRepository.IUserRepository;
 import repositories.userRepository.UserRepository;
 import statics.ItemStatics;
@@ -19,7 +19,7 @@ public class DatabaseSeedingUtil {
 
     public DatabaseSeedingUtil() {
         userRepository = new UserRepository();
-        itemRepository = new ItemRespository();
+        itemRepository = new ItemRepository();
     }
 
     public void seedDatabase() {

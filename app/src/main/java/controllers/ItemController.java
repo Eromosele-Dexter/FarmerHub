@@ -13,7 +13,7 @@ import models.Item;
 import models.Machine;
 import models.Produce;
 import models.User;
-import repositories.itemRepository.ItemRespository;
+import repositories.itemRepository.ItemRepository ;
 import repositories.userRepository.UserRepository;
 import services.ItemService;
 import services.UserService;
@@ -25,7 +25,7 @@ public class ItemController {
 
     public static List<Item> handleGetItemsByFarmerId(int farmerId) {
 
-        ItemService itemService = new ItemService(new ItemRespository()); 
+        ItemService itemService = new ItemService(new ItemRepository ()); 
 
         List<Item> items = itemService.handleGetItemsByFarmerId(farmerId);
 
@@ -33,7 +33,7 @@ public class ItemController {
     }
 
     public static void handleSetItemProperties(int itemId, TextField itemNameField, TextArea itemDescriptionArea, TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox) {
-        ItemService itemService = new ItemService(new ItemRespository());
+        ItemService itemService = new ItemService(new ItemRepository ());
 
         Item item = itemService.handleGetItemById(itemId);
 
@@ -61,7 +61,7 @@ public class ItemController {
 
     public static EventHandler<ActionEvent> createItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
             TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox, int farmerId, Stage stage, Text actionTarget) {
-                ItemService itemService = new ItemService(new ItemRespository());
+                ItemService itemService = new ItemService(new ItemRepository ());
 
                 return new EventHandler<ActionEvent>() {
                     @Override
@@ -90,7 +90,7 @@ public class ItemController {
 
     public static EventHandler<ActionEvent> updateItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
         TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox, int farmerId, Stage stage, Text actionTarget) {
-        ItemService itemService = new ItemService(new ItemRespository());
+        ItemService itemService = new ItemService(new ItemRepository ());
 
         return new EventHandler<ActionEvent>() {
             @Override
@@ -118,9 +118,19 @@ public class ItemController {
     }
     
     public static void deleteItem(Item item) {
-        ItemService itemService = new ItemService(new ItemRespository());
+        ItemService itemService = new ItemService(new ItemRepository ());
 
         itemService.handleDeleteItem(item);
+    }
+
+
+
+    public static List<Item> handleGetAllItems() {
+        ItemService itemService = new ItemService(new ItemRepository ());
+
+        List<Item> items = itemService.handleGetAllItems();
+
+        return items.isEmpty() ? null :  items;
     }
     
 }

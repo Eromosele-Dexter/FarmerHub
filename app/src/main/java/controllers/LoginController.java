@@ -53,7 +53,7 @@ public class LoginController {
 						return;
 					}
 					else if (user instanceof Customer) {
-						 new CustomerLandingPage(stage);
+						 new CustomerLandingPage(stage, user);
 
 						return;
 					}
