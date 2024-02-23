@@ -2,9 +2,8 @@ package views;
 
 import org.kordamp.bootstrapfx.BootstrapFX;
 
-import database.User;
+import controllers.RegistrationController;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -17,10 +16,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import statics.DbConfig;
+import statics.UserRoles;
+import utils.StringUtils;
 
 public class RegistrationPageView {
+
+	private RegistrationController registrationController;
+
 	public RegistrationPageView(Stage stage) {
-		stage.setTitle("Farmers Hub - Registration");
+
+		this.registrationController = RegistrationController.getInstance(DbConfig.IS_MOCK);
+
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.TOP_CENTER);
 		grid.setHgap(10);
@@ -59,7 +66,7 @@ public class RegistrationPageView {
 		grid.add(pwBox, 1, 4, 2, 1);
 		
 		ChoiceBox<String> cb = new ChoiceBox<String>();
-		cb.getItems().addAll("Farmer","Customer");
+		cb.getItems().addAll(StringUtils.capitalize(UserRoles.FARMER), StringUtils.capitalize(UserRoles.CUSTOMER.toLowerCase()));
 		grid.add(cb, 1,5,2,1);
 		
 		Button loginBtn = new Button("Back to Login");
@@ -77,28 +84,17 @@ public class RegistrationPageView {
 		
 		Text actionTarget = new Text();
 		grid.add(actionTarget, 1, 8);
-		actionTarget.getStyleClass().setAll("em", "text-danger", "h3");
+		actionTarget.getStyleClass().setAll("em", "text-danger", "h4");
 		
-		User oneUser = new User();
-		
-		
+
 		// ADD EVENT HANDLER AND LISTENERS
 		// Event Handler for Buttons
-		loginBtn.setOnAction(RegistrationController.onBackToLoginButtonClick(stage));
-		registerBtn.setOnAction(RegistrationController.onRegisterButtonClick(oneUser, actionTarget,stage));
+		loginBtn.setOnAction(registrationController.onBackToLoginButtonClick(stage));
+
+		registerBtn.setOnAction(registrationController.onRegisterButtonClick(fnTextField, lnTextField, unTextField, pwBox, cb, actionTarget, stage));
 		
 		
-		// Event Handler for TextFields
-		fnTextField.textProperty().addListener(RegistrationController.onFirstNameTextChange(oneUser));
-		lnTextField.textProperty().addListener(RegistrationController.onLastNameTextChange(oneUser));
-		unTextField.textProperty().addListener(RegistrationController.onUserNameTextChange(oneUser));
-		pwBox.textProperty().addListener(RegistrationController.onPasswordTextChange(oneUser));
-		
-		// Event handler for the ChoiceBox
-		cb.setOnAction(RegistrationController.onUserTypeSelection(oneUser, cb));
-		
-		
-		Scene scene = new Scene(grid, 500, 450);
+		Scene scene = new Scene(grid, 600, 600);
 		
 		scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 		stage.setScene(scene);
