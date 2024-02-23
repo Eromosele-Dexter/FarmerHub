@@ -16,12 +16,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import statics.DbConfig;
 import statics.UserRoles;
 import utils.StringUtils;
 
 public class RegistrationPageView {
+
+	private RegistrationController registrationController;
+
 	public RegistrationPageView(Stage stage) {
-		stage.setTitle("Farmers Hub - Registration");
+
+		this.registrationController = new RegistrationController(DbConfig.IS_MOCK);
+
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.TOP_CENTER);
 		grid.setHgap(10);
@@ -83,9 +89,9 @@ public class RegistrationPageView {
 
 		// ADD EVENT HANDLER AND LISTENERS
 		// Event Handler for Buttons
-		loginBtn.setOnAction(RegistrationController.onBackToLoginButtonClick(stage));
+		loginBtn.setOnAction(registrationController.onBackToLoginButtonClick(stage));
 
-		registerBtn.setOnAction(RegistrationController.onRegisterButtonClick(fnTextField, lnTextField, unTextField, pwBox, cb, actionTarget, stage));
+		registerBtn.setOnAction(registrationController.onRegisterButtonClick(fnTextField, lnTextField, unTextField, pwBox, cb, actionTarget, stage));
 		
 		
 		Scene scene = new Scene(grid, 600, 600);

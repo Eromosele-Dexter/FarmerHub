@@ -1,5 +1,6 @@
 
 import javafx.stage.Stage;
+import statics.DbConfig;
 import utils.DatabaseSeedingUtil;
 import views.LoginView;
 
@@ -9,13 +10,20 @@ import controllers.LoginController;
 
 public class ApplicationRunner extends javafx.application.Application {
 
-	static LoginController loginController = new LoginController();
+
+
+	static LoginController loginController = new LoginController(DbConfig.IS_MOCK);
+
     @Override
     public void start(Stage primaryStage) throws IOException {
     
         System.out.println("ApplicationRunner.java Running....");
-        DatabaseSeedingUtil db = new DatabaseSeedingUtil();
-        db.seedDatabase();
+
+        if(!DbConfig.IS_MOCK){
+            DatabaseSeedingUtil db = new DatabaseSeedingUtil();
+
+            db.seedDatabase();
+        }
 
         // Start the first Login View
         LoginView login1 = new LoginView(loginController);

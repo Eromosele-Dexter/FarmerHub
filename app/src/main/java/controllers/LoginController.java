@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import models.Customer;
 import models.Farmer;
 import models.User;
+import repositories.userRepository.MockUserRepository;
 import repositories.userRepository.UserRepository;
 import services.UserService;
 import views.RegistrationPageView;
@@ -22,8 +23,12 @@ public class LoginController {
 	
 	private UserService userService;
 
-	public LoginController() {
-		this.userService = new UserService(new UserRepository());
+	public LoginController(boolean isMock) {
+		if(isMock) {
+			this.userService = new UserService(new MockUserRepository());
+		} else {
+			this.userService = new UserService(new UserRepository());
+		}
 	}
 
 

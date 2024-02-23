@@ -9,20 +9,32 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import repositories.userRepository.MockUserRepository;
 import repositories.userRepository.UserRepository;
 import services.UserService;
 import views.LoginView;
 
 public class RegistrationController {
 
+	private UserService userService;
+	private boolean isMock;
+
+	public RegistrationController(boolean isMock) {
+		if(isMock) {
+			this.userService = new UserService(new MockUserRepository());
+		} else {
+			this.userService = new UserService(new UserRepository());
+		}
+		this.isMock = isMock;
+	}
+
 	// Event Handler for Back to Login Button
-		public static EventHandler<ActionEvent> onBackToLoginButtonClick(Stage stage) {
+	  public EventHandler<ActionEvent> onBackToLoginButtonClick(Stage stage) {
 			return new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent event) {
-					// Go Back to Login Page
-					LoginView loginView = new LoginView(new LoginController());
+					LoginView loginView = new LoginView(new LoginController(isMock));
 		            loginView.start(stage);
 		
 				}
@@ -32,11 +44,10 @@ public class RegistrationController {
 		}
 		
 		// Event Handler for Register Button
-		public static EventHandler<ActionEvent> onRegisterButtonClick(TextField fnTextField, TextField lnTextField, TextField unTextField, PasswordField pwBox, ChoiceBox<String> cb, Text actionTarget, Stage stage) {
+		public EventHandler<ActionEvent> onRegisterButtonClick(TextField fnTextField, TextField lnTextField, TextField unTextField, PasswordField pwBox, ChoiceBox<String> cb, Text actionTarget, Stage stage) {
 
 			return new EventHandler<ActionEvent>() {
 
-				UserService userService = new UserService(new UserRepository());
 
 				@Override
 				public void handle(ActionEvent event) {
@@ -55,7 +66,7 @@ public class RegistrationController {
 					PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
 
 					delay.setOnFinished(e -> {
-						LoginView loginView = new LoginView(new LoginController());
+						LoginView loginView = new LoginView(new LoginController(isMock));
 						loginView.start(stage);
 					});
 
