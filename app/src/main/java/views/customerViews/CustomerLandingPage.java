@@ -1,10 +1,15 @@
 package views.customerViews;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import controllers.ItemController;
 import controllers.OrderController;
 import controllers.ReviewController;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +24,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import models.Item;
 import models.Machine;
 import models.User;
@@ -26,10 +32,28 @@ import utils.StringUtils;
 
 public class CustomerLandingPage {
 
+	private VBox vbox; 
+    private Stage stage;
+    private int userId;
+	private User user;
+	Hyperlink goToCartLink; 
+	Hyperlink orderHistoryLink;
+	private Map<Integer, Integer> itemQuantities = new HashMap<>(); // Item ID to Quantity
 
 	public CustomerLandingPage(Stage stage, User user) {
-		int userId = user.getId();
+        this.stage = stage;
+        this.userId = user.getId();
+		this.user = user;
 
+        initializeUI();
+        startItemFetchLoop();
+    }
+
+	private void initializeUI() {
+		vbox = new VBox();
+        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.setPadding(new Insets(10));
+        vbox.setSpacing(10);
 
 		HBox topBar = new HBox();
 		topBar.setAlignment(Pos.CENTER_LEFT);
@@ -43,11 +67,11 @@ public class CustomerLandingPage {
 		linksContainer.setAlignment(Pos.CENTER_RIGHT);
 		HBox.setHgrow(linksContainer, javafx.scene.layout.Priority.ALWAYS); 
 
-		Hyperlink orderHistoryLink = new Hyperlink("Order History 📜");
+		orderHistoryLink = new Hyperlink("Order History 📜");
 
 		orderHistoryLink.setStyle("-fx-font-size: 16px;");
 
-		Hyperlink goToCartLink = new Hyperlink("Cart 🛒");
+		goToCartLink = new Hyperlink("Cart 🛒");
 		
 		
 		goToCartLink.setStyle("-fx-font-size: 16px;");
@@ -56,100 +80,26 @@ public class CustomerLandingPage {
 
 		topBar.getChildren().addAll(greeting, linksContainer);
 
-		VBox vbox = new VBox();
-		vbox.setPadding(new Insets(10));
-		vbox.setSpacing(8);
 
-		List<Item> fetchedItems = ItemController.handleGetAllItems();
-        List<Item> items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems) : FXCollections.observableArrayList();
-
-		for (Item item : items) {
-			VBox card = new VBox(10);
-			card.setPadding(new Insets(15));
-			card.setStyle("-fx-border-color: lightgrey; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #f9f9f9;");
-
-			Label itemName = new Label("Name: " + item.getName());
-			itemName.setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em; -fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
-			Label itemDescription = new Label("Description: " + item.getDescription());
-			Label itemPrice = new Label(String.format("Price: $%s", StringUtils.formatNumberPrice(item.getPrice())));
-			Label itemQuantity = new Label("Quantity Available: " + item.getQuantityAvailable());
-
-			Label itemCondition = null;
-			if (item instanceof Machine) {
-				Machine machine = (Machine) item;
-				itemCondition = new Label("Condition: " + StringUtils.capitalize(machine.getCondition()).replace("_", " "));
-			}
-
-			// Quantity adjustment controls
-			Label quantityLabel = new Label("0"); // Start with a default quantity
-			Button decreaseButton = new Button("-");
-			Button increaseButton = new Button("+");
-			HBox quantityAdjustmentBox = new HBox(5, decreaseButton, quantityLabel, increaseButton);
-			quantityAdjustmentBox.setAlignment(Pos.CENTER_LEFT);
-
-			decreaseButton.setOnAction(e -> {
-				int quantity = Integer.parseInt(quantityLabel.getText());
-				if (quantity > 1) { // Prevent quantity from going below 1
-					quantityLabel.setText(String.valueOf(--quantity));
-				}
-			});
-
-			increaseButton.setOnAction(e -> {
-				int quantity = Integer.parseInt(quantityLabel.getText());
-				if(quantity < item.getQuantityAvailable()) {
-					quantityLabel.setText(String.valueOf(++quantity)); 
-				}
-			});
-
-			Button addToCartButton = new Button("Add to Cart");
-			Button seeReviewsButton = new Button("See Reviews");
-			HBox buttonsBox = new HBox(10, addToCartButton, seeReviewsButton);
-			buttonsBox.setAlignment(Pos.CENTER_RIGHT);
-
-			addToCartButton.setOnAction(e -> {
-				int quantity = Integer.parseInt(quantityLabel.getText()); // Get the adjusted quantity
-				OrderController.addToCart(item, quantity, userId);
-				int cartSize = OrderController.getTotalCartQuantity(userId);
-				goToCartLink.setText("Cart" + "("+cartSize+") "+ "🛒");
-			});
-
-			seeReviewsButton.setOnAction(e -> {
-				Scene currentScene = stage.getScene();
-				ReviewController.viewReviews(item, stage, currentScene, userId);
-			});
-
-			HBox bottomBox = new HBox();
-			bottomBox.setSpacing(10);
-			Region spacer = new Region();
-			HBox.setHgrow(spacer, Priority.ALWAYS); 
-			bottomBox.getChildren().addAll(quantityAdjustmentBox, spacer, buttonsBox);
-
-
-			card.getChildren().addAll(itemName, itemDescription, itemPrice, itemQuantity);
-			if (itemCondition != null) {
-				card.getChildren().add(itemCondition);
-			}
-
-			card.getChildren().add(bottomBox); 
-			vbox.getChildren().add(card);
-		}		
-
-
-        ScrollPane scrollPane = new ScrollPane();
+		ScrollPane scrollPane = new ScrollPane(vbox);
         scrollPane.setContent(vbox);
         scrollPane.setFitToWidth(true); 
         scrollPane.setPadding(new Insets(10));
 
-		BorderPane root = new BorderPane();
-        root.setTop(topBar);
-        root.setCenter(scrollPane);
+		BorderPane mainLayout = new BorderPane();
+        mainLayout.setTop(topBar);
+        mainLayout.setCenter(scrollPane); // Wrap vbox in a ScrollPane for scrolling support
 
-        Scene scene = new Scene(root, 400, 600);
+        // Set the scene
+        Scene scene = new Scene(mainLayout, 400, 600);
 		orderHistoryLink.setOnAction(e -> showOrderHistoryPage(stage, userId, scene));
 		goToCartLink.setOnAction(e -> showCartPage(stage, userId, scene));
         stage.setScene(scene);
         stage.show();
+
 	}
+
+
 
 	private void showOrderHistoryPage(Stage stage, int userId, Scene scene) {
 		new OrderHistoryPage(stage, userId, scene);
@@ -158,4 +108,98 @@ public class CustomerLandingPage {
 	private void showCartPage(Stage stage, int userId, Scene scene) {
 		new CartPage(stage, userId, scene);
 	}
+
+	private void startItemFetchLoop() {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            fetchAndDisplayItems();
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+	 private void fetchAndDisplayItems() {
+        Platform.runLater(() -> {
+            List<Item> fetchedItems = ItemController.handleGetAllItems();
+            List<Item> items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems) : FXCollections.observableArrayList();
+            vbox.getChildren().clear(); // Clear existing items before adding new ones
+
+            // Rebuild the items display in vbox similar to how you initially populate it in the constructor
+			for (Item item : items) {
+				VBox card = new VBox(10);
+				card.setPadding(new Insets(15));
+				card.setStyle("-fx-border-color: lightgrey; -fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #f9f9f9;");
+	
+				Label itemName = new Label("Name: " + item.getName());
+				itemName.setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em; -fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
+				Label itemDescription = new Label("Description: " + item.getDescription());
+				Label itemPrice = new Label(String.format("Price: $%s", StringUtils.formatNumberPrice(item.getPrice())));
+				Label itemQuantity = new Label("Quantity Available: " + item.getQuantityAvailable());
+	
+				Label itemCondition = null;
+				if (item instanceof Machine) {
+					Machine machine = (Machine) item;
+					itemCondition = new Label("Condition: " + StringUtils.capitalize(machine.getCondition()).replace("_", " "));
+				}
+	
+                // Quantity adjustment controls with remembered quantity
+                int initialQuantity = itemQuantities.getOrDefault(item.getId(), 0); // Get the remembered quantity
+                Label quantityLabel = new Label(String.valueOf(initialQuantity));
+
+                Button decreaseButton = new Button("-");
+                decreaseButton.setOnAction(e -> {
+                    int quantity = Integer.parseInt(quantityLabel.getText());
+                    if (quantity > 0) {
+                        quantityLabel.setText(String.valueOf(--quantity));
+                        itemQuantities.put(item.getId(), quantity); // Update the map with the new quantity
+                    }
+                });
+
+                Button increaseButton = new Button("+");
+                increaseButton.setOnAction(e -> {
+                    int quantity = Integer.parseInt(quantityLabel.getText());
+                    if(quantity < item.getQuantityAvailable()) {
+                        quantityLabel.setText(String.valueOf(++quantity));
+                        itemQuantities.put(item.getId(), quantity); // Update the map with the new quantity
+                    }
+                });
+	
+				Button addToCartButton = new Button("Add to Cart");
+				Button seeReviewsButton = new Button("See Reviews");
+				HBox buttonsBox = new HBox(10, addToCartButton, seeReviewsButton);
+				buttonsBox.setAlignment(Pos.CENTER_RIGHT);
+	
+				addToCartButton.setOnAction(e -> {
+					int quantity = Integer.parseInt(quantityLabel.getText()); // Get the adjusted quantity
+					OrderController.addToCart(item, quantity, userId);
+					int cartSize = OrderController.getTotalCartQuantity(userId);
+					goToCartLink.setText("Cart" + "("+cartSize+") "+ "🛒");
+				});
+	
+				seeReviewsButton.setOnAction(e -> {
+					Scene currentScene = stage.getScene();
+					ReviewController.viewReviews(item, stage, currentScene, userId);
+				});
+
+				HBox quantityAdjustmentBox = new HBox(5, decreaseButton, quantityLabel, increaseButton);
+                quantityAdjustmentBox.setAlignment(Pos.CENTER_LEFT);
+	
+				HBox bottomBox = new HBox();
+				bottomBox.setSpacing(10);
+				Region spacer = new Region();
+				HBox.setHgrow(spacer, Priority.ALWAYS); 
+				bottomBox.getChildren().addAll(quantityAdjustmentBox, spacer, buttonsBox);
+	
+	
+				card.getChildren().addAll(itemName, itemDescription, itemPrice, itemQuantity);
+				if (itemCondition != null) {
+					card.getChildren().add(itemCondition);
+				}
+	
+				card.getChildren().add(bottomBox); 
+				vbox.getChildren().add(card);
+			}		
+	
+	
+        });
+    }
 }

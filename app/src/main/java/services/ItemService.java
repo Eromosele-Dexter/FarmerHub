@@ -132,9 +132,6 @@ public class ItemService {
 
         if (type != null && type.toUpperCase().equals(ItemStatics.MACHINE) && (condition == null || condition.trim().isEmpty())) {missingFields.append("\nCondition, ");}
 
-
-        System.out.println("Type: " + type);
-
         if (missingFields.length() > "Missing fields: ".length()) {
 
             missingFields.setLength(missingFields.length() - 2);

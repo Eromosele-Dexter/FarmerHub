@@ -63,7 +63,6 @@ public class OrderHistoryPage {
         Hyperlink addReviewLink = new Hyperlink("Add Review");
         addReviewLink.setTextFill(Color.BLUE);
         addReviewLink.setOnAction(e -> {
-            System.out.println("Navigating to Add Review Page for " + item.getName());
             new ReviewPage(stage, item.getItemId(), stage.getScene(),userId);
         });
 

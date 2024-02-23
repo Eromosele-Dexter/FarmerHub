@@ -259,7 +259,6 @@ public class ItemRepository implements IItemRepository{
 
                 items.add(item);
 
-                System.out.println("Item: " + item.getName());
             }
 
         } catch (SQLException e) {

@@ -34,7 +34,6 @@ public class OrderService {
                     if(orderItemResponse.getQuantity() + quantity > item.getQuantityAvailable()){
                         quantityToSet = item.getQuantityAvailable();
                     }
-                    System.out.println("Item Quantity Available: " + item.getQuantityAvailable() + " Order Item Quantity: " + orderItemResponse.getQuantity() + " Quantity: " + quantity + " Quantity To Set: " + quantityToSet);
                 }
             }
             
@@ -108,8 +107,6 @@ public class OrderService {
 
         List<OrderItem> customerCart = orderItemRepository.getOrderItemsByCustomerId(customerId);
 
-        System.out.println("Customer Cart: " + customerCart.size());
-
         HashMap<Integer, OrderItemResponse> orderItemMap = new HashMap<Integer, OrderItemResponse>();
 
         for (OrderItem orderItem : customerCart) {
@@ -125,7 +122,6 @@ public class OrderService {
             }
         }
 
-        System.out.println("Order Item Map: " + orderItemMap.size());
 
         for (OrderItemResponse orderItemResponse : orderItemMap.values()) {
             OrderItem orderItem = new OrderItem(orderItemResponse.getItemId(), orderItemResponse.getCustomerId(), orderItemResponse.getQuantity(), orderItemResponse.getPrice(), new Date().getTime()+"");
@@ -139,8 +135,6 @@ public class OrderService {
             Item item = itemService.handleGetItemById(orderItem.getItemId());
 
             itemService.handleUpdateQuantityAvailable(item.getId(), item.getQuantityAvailable() - orderItem.getQuantity());
-            
-            System.out.println("Order Item: " + orderItemResponse.getItemId() + " " + orderItemResponse.getCustomerId() + " " + orderItemResponse.getQuantity() + " " + orderItemResponse.getPrice());
         }
 
         updateOrder(orderItems, new Date().getTime()+"");
