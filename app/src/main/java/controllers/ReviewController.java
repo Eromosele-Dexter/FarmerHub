@@ -24,6 +24,7 @@ import views.customerViews.ReviewPage;
 
 public class ReviewController {
 
+    private static ReviewController instance;
     private RatingAndReviewService ratingAndReviewService;
     private UserService userService;
 
@@ -36,6 +37,13 @@ public class ReviewController {
             this.userService = new UserService(new UserRepository());
             this.ratingAndReviewService = new RatingAndReviewService(new ReviewRepository(), userService);
         }
+    }
+
+    public static ReviewController getInstance(boolean isMock) {
+        if (instance == null) {
+            instance = new ReviewController(isMock);
+        }
+        return instance;
     }
 
     public void viewReviews(Item item, Stage stage, Scene scene, int userId) {

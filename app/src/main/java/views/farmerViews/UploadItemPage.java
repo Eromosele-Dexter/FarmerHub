@@ -2,6 +2,8 @@ package views.farmerViews;
 
 
 
+import java.util.Arrays;
+
 import controllers.ItemController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -28,7 +30,7 @@ public class UploadItemPage {
 
 
     public UploadItemPage(Stage stage, Item item, int userId, Scene previousScene) {
-        this.itemController = new ItemController(DbConfig.IS_MOCK);
+        this.itemController = ItemController.getInstance(DbConfig.IS_MOCK);
 
         HBox topBar = new HBox();
         topBar.setPadding(new Insets(10, 10, 10, 10));
@@ -78,11 +80,20 @@ public class UploadItemPage {
         priceBox.setAlignment(Pos.CENTER_LEFT);
         Label dollarSign = new Label("$");
         dollarSign.setFont(new Font("Arial", 14));
+        
         itemPriceField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                itemPriceField.setText(newValue.replaceAll("[^\\d]", ""));
+
+            if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                String valueWithoutInvalidChars = newValue.replaceAll("[^\\d.]", ""); 
+                String[] splitByDot = valueWithoutInvalidChars.split("\\.");
+                if (splitByDot.length > 2) {
+                    itemPriceField.setText(splitByDot[0] + "." + String.join("", Arrays.copyOfRange(splitByDot, 1, splitByDot.length)));
+                } else {
+                    itemPriceField.setText(valueWithoutInvalidChars);
+                }
             }
         });
+        
         
         
         itemPriceField.setPrefWidth(100); 

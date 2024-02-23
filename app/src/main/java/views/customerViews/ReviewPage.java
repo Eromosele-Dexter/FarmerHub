@@ -27,8 +27,8 @@ public class ReviewPage {
 
     public ReviewPage(Stage stage, int itemId, Scene previousScene, int userId) {
 
-        this.reviewController = new ReviewController(DbConfig.IS_MOCK);
-        this.itemController = new ItemController(DbConfig.IS_MOCK);
+        this.reviewController = ReviewController.getInstance(DbConfig.IS_MOCK);
+        this.itemController = ItemController.getInstance(DbConfig.IS_MOCK);
        
 
         HBox topBar = new HBox();

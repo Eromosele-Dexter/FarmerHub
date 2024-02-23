@@ -1,5 +1,6 @@
 package repositories.itemRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,11 +13,12 @@ import statics.ItemStatics;
 
 public class MockItemRepository implements IItemRepository{
 
-    private List<Item> items;
+    private static List<Item> items;
     private AtomicInteger itemIdCounter;
 
     public MockItemRepository() {
         this.itemIdCounter = new AtomicInteger(1);
+        MockItemRepository.items = new ArrayList<>();
 
         Item[] items = new Item[4]; 
 
@@ -37,6 +39,7 @@ public class MockItemRepository implements IItemRepository{
         item.setId(itemIdCounter.getAndIncrement());
         items.add(item);
     }
+    
 
     public void updateItem(Item item) {
 
@@ -44,11 +47,13 @@ public class MockItemRepository implements IItemRepository{
             .filter(i -> items.get(i).getId() == item.getId())
             .findFirst();
 
+
         if (indexOptional.isPresent()) {
             items.set(indexOptional.getAsInt(), item);
         } else {
             System.out.println("Item with ID " + item.getId() + " not found in Mock Item Repo.");
         }
+
     }
 
     public void deleteItem(Item item) {
@@ -75,9 +80,11 @@ public class MockItemRepository implements IItemRepository{
     }
 
     public List<Item> getItemsByFarmerId(int farmerId) {
-        return items.stream()
+       List<Item> items = MockItemRepository.items.stream()
             .filter(item -> item.getFarmerId() == farmerId)
             .toList();
+
+        return items;
     }
 
     public List<Item> getItemsByIds(List<Integer> itemIds) {

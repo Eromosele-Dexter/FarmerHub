@@ -48,9 +48,9 @@ public class CustomerLandingPage {
         this.stage = stage;
         this.userId = user.getId();
 		this.user = user;
-		this.orderController = new OrderController(DbConfig.IS_MOCK);
-		this.itemController = new ItemController(DbConfig.IS_MOCK);
-		this.reviewController = new ReviewController(DbConfig.IS_MOCK);
+		this.orderController = OrderController.getInstance(DbConfig.IS_MOCK);
+		this.itemController = ItemController.getInstance(DbConfig.IS_MOCK);
+		this.reviewController = ReviewController.getInstance(DbConfig.IS_MOCK);
 
         initializeUI();
         startItemFetchLoop();

@@ -9,7 +9,7 @@ import models.Farmer;
 import models.User;
 
 public class MockUserRepository implements IUserRepository{
-    private List<User> users;
+    private static List<User> users;
     private AtomicInteger userIdCounter;
 
     public MockUserRepository() {
@@ -22,7 +22,7 @@ public class MockUserRepository implements IUserRepository{
             new Farmer("Jim", "Beam", "jimbeam", "password789")
         };
 
-        this.users = new ArrayList<>();
+        MockUserRepository.users = new ArrayList<>();
 
         for (User user : users) {
             createUser(user);

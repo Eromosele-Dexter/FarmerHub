@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import models.Item;
 import models.Machine;
 import models.User;
+import statics.DbConfig;
 import utils.StringUtils;
 
 public class FarmerLandingPage {
@@ -33,6 +34,7 @@ public class FarmerLandingPage {
 
 
     public FarmerLandingPage(Stage stage, User user) {
+        this.itemController = ItemController.getInstance(DbConfig.IS_MOCK);
         this.stage = stage;
         this.userId = user.getId();
         this.user = user;
@@ -129,6 +131,7 @@ public class FarmerLandingPage {
 
                 updateButton.setOnAction(e -> {
                     Scene currentScene = stage.getScene();
+    
                     showUpdateItemPage(stage, item, userId, currentScene);
                 });
                 deleteButton.setOnAction(e -> {

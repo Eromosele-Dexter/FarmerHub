@@ -16,6 +16,7 @@ import views.LoginView;
 
 public class RegistrationController {
 
+	private static RegistrationController instance;
 	private UserService userService;
 	private boolean isMock;
 
@@ -28,13 +29,20 @@ public class RegistrationController {
 		this.isMock = isMock;
 	}
 
+	public static RegistrationController getInstance(boolean isMock) {
+		if (instance == null) {
+			instance = new RegistrationController(isMock);
+		}
+		return instance;
+	}
+
 	// Event Handler for Back to Login Button
 	  public EventHandler<ActionEvent> onBackToLoginButtonClick(Stage stage) {
 			return new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent event) {
-					LoginView loginView = new LoginView(new LoginController(isMock));
+					LoginView loginView = new LoginView(LoginController.getInstance(isMock));
 		            loginView.start(stage);
 		
 				}
@@ -66,7 +74,7 @@ public class RegistrationController {
 					PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
 
 					delay.setOnFinished(e -> {
-						LoginView loginView = new LoginView(new LoginController(isMock));
+						LoginView loginView = new LoginView(LoginController.getInstance(isMock));
 						loginView.start(stage);
 					});
 

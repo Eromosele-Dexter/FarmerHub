@@ -1,5 +1,6 @@
 package repositories.reviewRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -7,11 +8,12 @@ import models.RatingAndReview;
 
 public class MockReviewRepository implements IReviewRepository{
 
-    private List<RatingAndReview> reviews;
+    private static List<RatingAndReview> reviews;
     private AtomicInteger reviewIdCounter;
 
     public MockReviewRepository() {
         this.reviewIdCounter = new AtomicInteger(1);
+        MockReviewRepository.reviews = new ArrayList<>();
     }
 
     public void addRatingAndReview(RatingAndReview ratingAndReview) {

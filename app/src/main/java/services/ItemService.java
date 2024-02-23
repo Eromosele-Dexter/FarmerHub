@@ -71,8 +71,9 @@ public class ItemService {
         if(fetchedItem != null){
             newItem.setId(fetchedItem.getId());
         }
-
         itemRepository.updateItem(newItem);
+
+   
 
         actionTarget.setText("Item Updated Successfully");
 

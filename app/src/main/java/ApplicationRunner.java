@@ -12,7 +12,7 @@ public class ApplicationRunner extends javafx.application.Application {
 
 
 
-	static LoginController loginController = new LoginController(DbConfig.IS_MOCK);
+	static LoginController loginController = LoginController.getInstance(DbConfig.IS_MOCK);
 
     @Override
     public void start(Stage primaryStage) throws IOException {

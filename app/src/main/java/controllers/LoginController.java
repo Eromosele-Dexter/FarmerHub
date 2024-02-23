@@ -21,6 +21,7 @@ import views.farmerViews.FarmerLandingPage;
 
 public class LoginController {
 	
+	private static LoginController instance;
 	private UserService userService;
 
 	public LoginController(boolean isMock) {
@@ -29,6 +30,13 @@ public class LoginController {
 		} else {
 			this.userService = new UserService(new UserRepository());
 		}
+	}
+
+	public static LoginController getInstance(boolean isMock) {
+		if (instance == null) {
+			instance = new LoginController(isMock);
+		}
+		return instance;
 	}
 
 

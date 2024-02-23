@@ -21,7 +21,7 @@ public class SalesHistoryPage {
     private OrderController orderController;
 
    public SalesHistoryPage(Stage stage, int userId, Scene previousScene) {
-        this.orderController = new OrderController(DbConfig.IS_MOCK);
+        this.orderController = OrderController.getInstance(DbConfig.IS_MOCK);
 
         HBox topBar = new HBox();
         topBar.setPadding(new Insets(10, 10, 10, 10));

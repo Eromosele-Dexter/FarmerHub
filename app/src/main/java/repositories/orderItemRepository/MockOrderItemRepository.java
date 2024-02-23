@@ -1,5 +1,6 @@
 package repositories.orderItemRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -7,11 +8,12 @@ import models.OrderItem;
 
 public class MockOrderItemRepository implements IOrderItemRepository{
 
-    private List<OrderItem> orderItems;
+    private static List<OrderItem> orderItems;
     private AtomicInteger orderItemIdCounter;
 
     public MockOrderItemRepository() {
         this.orderItemIdCounter = new AtomicInteger(1);
+        MockOrderItemRepository.orderItems = new ArrayList<>();
     }
 
     public void createOrderItem(OrderItem orderItem) {

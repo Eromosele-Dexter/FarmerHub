@@ -31,8 +31,8 @@ public class CartPage {
 
 
         public CartPage(Stage stage, int userId, Scene previousScene) {
-            this.orderController = new OrderController(DbConfig.IS_MOCK);
-            this.loginController = new LoginController(DbConfig.IS_MOCK);
+            this.orderController = OrderController.getInstance(DbConfig.IS_MOCK);
+            this.loginController = LoginController.getInstance(DbConfig.IS_MOCK);
 
             this.userId = userId;
 

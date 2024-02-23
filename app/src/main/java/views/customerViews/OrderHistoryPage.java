@@ -23,7 +23,7 @@ public class OrderHistoryPage {
     private OrderController orderController;
 
     public OrderHistoryPage(Stage stage, int userId, Scene previousScene) {
-        this.orderController = new OrderController(DbConfig.IS_MOCK);
+        this.orderController = OrderController.getInstance(DbConfig.IS_MOCK);
 
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.CENTER_LEFT);

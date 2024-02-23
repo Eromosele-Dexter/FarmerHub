@@ -13,6 +13,7 @@ import services.OrderService;
 
 public class OrderController {
 
+    private static OrderController instance;
     private ItemService itemService;
     private OrderService orderService;
 
@@ -24,6 +25,13 @@ public class OrderController {
             this.itemService = new ItemService(new ItemRepository());
             this.orderService = new OrderService(new OrderItemRepository(), itemService);
         }
+    }
+
+    public static OrderController getInstance(boolean isMock) {
+        if (instance == null) {
+            instance = new OrderController(isMock);
+        }
+        return instance;
     }
 
     public void addToCart(Item item, int quantity, int userId) {

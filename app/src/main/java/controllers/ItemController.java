@@ -23,6 +23,7 @@ import views.farmerViews.FarmerLandingPage;
 
 public class ItemController {
 
+    private static ItemController instance;
     private ItemService itemService;
     private UserService userService;
 
@@ -34,6 +35,13 @@ public class ItemController {
             this.itemService = new ItemService(new ItemRepository());
             this.userService = new UserService(new UserRepository());
         }
+    }
+
+    public static ItemController getInstance(boolean isMock) {
+        if (instance == null) {
+            instance = new ItemController(isMock);
+        }
+        return instance;
     }
 
 
@@ -107,6 +115,7 @@ public class ItemController {
                 int quantity = Integer.parseInt(quantityField.getText());
                 String type = itemTypeBox.getValue();
                 String condition = conditionBox.getValue();
+
 
                 boolean isValid = itemService.handleUpdateItem(name, description, price, quantity, type, farmerId, actionTarget, condition.toUpperCase());
 

@@ -26,7 +26,7 @@ public class RegistrationPageView {
 
 	public RegistrationPageView(Stage stage) {
 
-		this.registrationController = new RegistrationController(DbConfig.IS_MOCK);
+		this.registrationController = RegistrationController.getInstance(DbConfig.IS_MOCK);
 
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.TOP_CENTER);
