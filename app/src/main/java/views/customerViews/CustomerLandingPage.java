@@ -71,7 +71,10 @@ public class CustomerLandingPage {
 
 		orderHistoryLink.setStyle("-fx-font-size: 16px;");
 
-		goToCartLink = new Hyperlink("Cart 🛒");
+		int cartSize = OrderController.getTotalCartQuantity(userId);
+
+		goToCartLink = new Hyperlink(cartSize == 0 ? "Cart 🛒" :"Cart" + "("+cartSize+") "+ "🛒" );
+		
 		
 		
 		goToCartLink.setStyle("-fx-font-size: 16px;");
@@ -88,7 +91,7 @@ public class CustomerLandingPage {
 
 		BorderPane mainLayout = new BorderPane();
         mainLayout.setTop(topBar);
-        mainLayout.setCenter(scrollPane); // Wrap vbox in a ScrollPane for scrolling support
+        mainLayout.setCenter(scrollPane); 
 
         // Set the scene
         Scene scene = new Scene(mainLayout, 400, 600);
@@ -110,6 +113,7 @@ public class CustomerLandingPage {
 	}
 
 	private void startItemFetchLoop() {
+		fetchAndDisplayItems(); // Fetch and display items immediately
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
             fetchAndDisplayItems();
         }));
@@ -173,6 +177,9 @@ public class CustomerLandingPage {
 					OrderController.addToCart(item, quantity, userId);
 					int cartSize = OrderController.getTotalCartQuantity(userId);
 					goToCartLink.setText("Cart" + "("+cartSize+") "+ "🛒");
+					quantityLabel.setText("0"); 
+					itemQuantities.put(item.getId(), 0); 
+
 				});
 	
 				seeReviewsButton.setOnAction(e -> {

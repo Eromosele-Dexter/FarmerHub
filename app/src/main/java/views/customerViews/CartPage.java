@@ -23,7 +23,15 @@ import utils.StringUtils;
 
 
 public class CartPage {
+
+        private int userId;
+        private Label totalLabel;
+
+
         public CartPage(Stage stage, int userId, Scene previousScene) {
+
+            this.userId = userId;
+
 
             // Top bar for back button and page title
             HBox topBar = new HBox();
@@ -32,7 +40,7 @@ public class CartPage {
             topBar.setSpacing(20);
         
             Button backButton = new Button("Back");
-            backButton.setOnAction(e -> stage.setScene(previousScene));
+            backButton.setOnAction(e -> new CustomerLandingPage(stage, new UserService(new UserRepository()).handleGetUserById(userId)));
         
             Label pageTitle = new Label("Your Cart");
             pageTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
@@ -51,6 +59,8 @@ public class CartPage {
             itemsContainer.setPadding(new Insets(10));
 
             Label totalLabel = new Label();
+            this.totalLabel = totalLabel;
+
 
         double total = 0;
         int totalQuantity = 0;
@@ -84,12 +94,12 @@ public class CartPage {
                         quantityField.setText(String.valueOf(--quantity));
                         OrderController.reduceQuantityBy1(item.getOrderItemId(), userId);
                     }
-
-                    if (quantity == 1) {
-                        OrderController.removeFromCart(item.getOrderItemId(), userId);
+                    else if (quantity == 1) {
+                        // OrderController.removeFromCart(item.getOrderItemId(), userId);
+                        OrderController.reduceQuantityBy1(item.getOrderItemId(), userId);
                         itemsContainer.getChildren().remove(card);    
-              
                     }
+                    updateTotals(); 
 
                 });
 
@@ -100,6 +110,7 @@ public class CartPage {
                         quantityField.setText(String.valueOf(++quantity));
                         OrderController.increaseQuantityBy1(item.getOrderItemId(), userId);
                     }
+                    updateTotals();
                         
                 });
 
@@ -153,6 +164,19 @@ public class CartPage {
         stage.setScene(scene);
         stage.show();
     }
+
+    private void updateTotals() {
+        double total = 0;
+        int totalQuantity = 0;
+    
+        for (OrderItemResponse item : OrderController.viewCart(userId)) {
+            total += item.getPrice() * item.getQuantity();
+            totalQuantity += item.getQuantity();
+        }
+    
+        totalLabel.setText(String.format("Total Items: %d \n Total Price: $%s\n\n\n", totalQuantity, String.format("%s", StringUtils.formatNumberPrice(total))));
+    }
+    
 
 
 

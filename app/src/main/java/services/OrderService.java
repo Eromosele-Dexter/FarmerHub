@@ -190,12 +190,21 @@ public class OrderService {
     public void reduceQuantity(int orderItemId, int userId) {
         OrderItem orderItem = orderItemRepository.getOrderItemById(orderItemId
         );
+        System.out.println("Order item qty: "+orderItem.getQuantity());
+        System.out.println("item id: "+orderItem.getItemId() + " user id: "+userId);
 
         if(orderItem.getQuantity() > 1){
             orderItem.setQuantity(orderItem.getQuantity() - 1);
             orderItem.setDateOrdered(new Date().getTime()+"");
             orderItemRepository.updateOrderItem(orderItem);
         }
+
+        else if(orderItem.getQuantity() == 1){
+            System.out.println("Deleting....");
+            orderItemRepository.deleteOrderItem(orderItem.getItemId(), userId);
+
+        }
+
 
     }
 

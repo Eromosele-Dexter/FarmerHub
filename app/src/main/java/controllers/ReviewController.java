@@ -7,11 +7,8 @@ import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Item;
@@ -21,7 +18,6 @@ import repositories.reviewRepository.ReviewRepository;
 import repositories.userRepository.UserRepository;
 import services.RatingAndReviewService;
 import services.UserService;
-import views.LoginView;
 import views.customerViews.ReviewPage;
 
 public class ReviewController {
