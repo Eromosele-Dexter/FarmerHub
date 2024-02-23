@@ -88,4 +88,8 @@ public class LoginController {
 
 	}
 
+	public User getUserById(int userId) {
+		return userService.handleGetUserById(userId);
+	}	
+
 }

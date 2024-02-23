@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.text.Text;
@@ -44,8 +45,8 @@ public class ItemService {
         
     }
 
-    public boolean handleUpdateItem(String name, String description, double price, int quantity, String type, int farmerId, Text actionTarget, String condition) {
-        String validationMessage = validateUpsertItem(name, description, price, quantity, type, condition);
+    public boolean handleUpdateItem(String name, String description, double price, int quantityAvailable, String type, int farmerId, Text actionTarget, String condition) {
+        String validationMessage = validateUpsertItem(name, description, price, quantityAvailable, type, condition);
 
         if (!validationMessage.isEmpty()) {
 
@@ -59,11 +60,11 @@ public class ItemService {
         Item fetchedItem = itemRepository.getItemByFarmerIdAndName(farmerId, name);
 
         if(type.toUpperCase().equals(ItemStatics.MACHINE)){
-            newItem = new Machine( farmerId, name, description, price, quantity, condition);
+            newItem = new Machine( farmerId, name, description, price, quantityAvailable, condition);
 
         }
         else {
-            newItem = new Produce(farmerId, name, description, price, quantity);
+            newItem = new Produce(farmerId, name, description, price, quantityAvailable);
         }
 
 
@@ -78,6 +79,10 @@ public class ItemService {
         return true;
     }
 
+    public void handleUpdateQuantityAvailable(int itemId, int quantityAvailable) {
+        itemRepository.updateQuantityAvailable(itemId, quantityAvailable);
+    }
+
 
     public Item handleGetItemById(int itemId) {
         return itemRepository.getItemById(itemId);
@@ -88,7 +93,18 @@ public class ItemService {
     }
 
     public List<Item> handleGetAllItems() {
-        return itemRepository.getAllItems();
+        
+        List<Item> fetchedItems = itemRepository.getAllItems();
+
+        List<Item> items = new ArrayList<>();
+        
+        for (Item item : fetchedItems) {
+            if(item.getQuantityAvailable() > 0){
+                items.add(item);
+            }
+        }
+
+        return items;
     }
 
     public List<Item> handleGetItemsByIds(List<Integer> itemIds) {

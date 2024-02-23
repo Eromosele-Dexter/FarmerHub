@@ -269,6 +269,31 @@ public class ItemRepository implements IItemRepository{
     }
 
 
+    public void updateQuantityAvailable(int itemId, int quantityAvailable) {
+       
+        String sql = "UPDATE items SET quantity_available = ? WHERE id = ?";
+    
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+            pstmt.setInt(1, quantityAvailable);
+            pstmt.setInt(2, itemId);
+    
+            int affectedRows = pstmt.executeUpdate();
+    
+            if (affectedRows > 0) {
+                System.out.println("Quantity available updated successfully.");
+            } else {
+                System.out.println("No record found with the given ID.");
+            }
+    
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     private Item parseItem(ResultSet rs) throws SQLException{
 
         String type = rs.getString("type");
@@ -300,6 +325,7 @@ public class ItemRepository implements IItemRepository{
             throw new SQLException("Unknown type of item");
         }
     }
+
 
 
 }

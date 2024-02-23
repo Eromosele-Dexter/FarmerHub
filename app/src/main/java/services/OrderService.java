@@ -22,12 +22,30 @@ public class OrderService {
 
         OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerIdAndHasNotBeenPurchased(itemId, customerId);
 
+        Item item = itemService.handleGetItemById(itemId);
+
         if(orderItem != null){
-            orderItem.setQuantity(orderItem.getQuantity() + quantity);
+            List<OrderItemResponse> orderItems = getCustomerCart(customerId);
+
+            int quantityToSet = orderItem.getQuantity() + quantity;
+
+            for (OrderItemResponse orderItemResponse : orderItems) {
+                if(orderItemResponse.getOrderItemId() == orderItem.getId()){
+                    if(orderItemResponse.getQuantity() + quantity > item.getQuantityAvailable()){
+                        quantityToSet = item.getQuantityAvailable();
+                    }
+                    System.out.println("Item Quantity Available: " + item.getQuantityAvailable() + " Order Item Quantity: " + orderItemResponse.getQuantity() + " Quantity: " + quantity + " Quantity To Set: " + quantityToSet);
+                }
+            }
+            
+            orderItem.setQuantity(quantityToSet);
             orderItem.setDateOrdered(new Date().getTime()+"");
             orderItemRepository.updateOrderItem(orderItem);
 
         } else {
+            if(item.getQuantityAvailable() < quantity){
+                return;
+            }
             orderItem = new OrderItem(itemId, customerId, quantity, price, new Date().getTime()+"");
             orderItemRepository.createOrderItem(orderItem);
         }
@@ -74,11 +92,6 @@ public class OrderService {
         return orderItemResponses;
     }
 
-    // public OrderItemResponse getOrderItemByItemIdAndCustomerId(int itemId, int customerId) {
-    //     OrderItem orderItem = orderItemRepository.getOrderItemByItemIdAndCustomerId(itemId, customerId);
-
-    //     return getOrderItemResponse(orderItem);     
-    // }
 
     public void updateOrder(List<OrderItem> orderItems, String dateTime) {
 
@@ -123,6 +136,10 @@ public class OrderService {
 
             orderItems.add(orderItem);
 
+            Item item = itemService.handleGetItemById(orderItem.getItemId());
+
+            itemService.handleUpdateQuantityAvailable(item.getId(), item.getQuantityAvailable() - orderItem.getQuantity());
+            
             System.out.println("Order Item: " + orderItemResponse.getItemId() + " " + orderItemResponse.getCustomerId() + " " + orderItemResponse.getQuantity() + " " + orderItemResponse.getPrice());
         }
 
@@ -173,6 +190,40 @@ public class OrderService {
        return new OrderItemResponse(orderItem.getItemId(), orderItem.getId(), item.getFarmerId(), item.getName(),
         item.getDescription(), item.getPrice(), orderItem.getCustomerId(),
          orderItem.getQuantity(), orderItem.getDateOrdered());
+    }
+
+    public void reduceQuantity(int orderItemId, int userId) {
+        OrderItem orderItem = orderItemRepository.getOrderItemById(orderItemId
+        );
+
+        if(orderItem.getQuantity() > 1){
+            orderItem.setQuantity(orderItem.getQuantity() - 1);
+            orderItem.setDateOrdered(new Date().getTime()+"");
+            orderItemRepository.updateOrderItem(orderItem);
+        }
+
+    }
+
+    public void increaseQuantity(int orderItemId, int customerId) {
+        OrderItem orderItem = orderItemRepository.getOrderItemById(orderItemId);
+
+        Item item = itemService.handleGetItemById(orderItem.getItemId());
+
+        List<OrderItemResponse> orderItems = getCustomerCart(customerId);
+
+            int quantityToSet = orderItem.getQuantity() + 1;
+
+            for (OrderItemResponse orderItemResponse : orderItems) {
+                if(orderItemResponse.getOrderItemId() == orderItemId){
+                    if(orderItemResponse.getQuantity() + 1> item.getQuantityAvailable()){
+                        quantityToSet = item.getQuantityAvailable();
+                    }
+                }
+            }
+            
+            orderItem.setQuantity(quantityToSet);
+            orderItem.setDateOrdered(new Date().getTime()+"");
+            orderItemRepository.updateOrderItem(orderItem);
     }
     
 }

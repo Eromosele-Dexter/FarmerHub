@@ -46,4 +46,34 @@ public class OrderController {
 
         return orderItems;
     }
+
+    public static void reduceQuantityBy1(int orderItemId, int userId) {
+        OrderService orderService = new OrderService(new OrderItemRepository(), new ItemService(new ItemRepository()));
+
+        orderService.reduceQuantity(orderItemId, userId);
+    }
+
+    public static void increaseQuantityBy1(int orderItemId, int userId) {
+        OrderService orderService = new OrderService(new OrderItemRepository(), new ItemService(new ItemRepository()));
+
+        orderService.increaseQuantity(orderItemId, userId);
+    }
+    
+    public static int getQuantityAvailable(int itemId) {
+        ItemService itemService = new ItemService(new ItemRepository());
+
+        return itemService.handleGetItemById(itemId).getQuantityAvailable();
+    }
+
+    public static int getTotalCartQuantity(int userId) {
+        List<OrderItemResponse> items  = viewCart(userId);
+
+        int total = 0;
+
+        for (OrderItemResponse item : items) {
+            total += item.getQuantity();
+        }
+
+        return total;
+    }
 }

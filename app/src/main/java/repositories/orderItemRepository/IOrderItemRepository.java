@@ -11,5 +11,6 @@ public interface IOrderItemRepository {
     List<OrderItem>getOrderItemsByItemIds(List<Integer> itemIds);
     void updateOrderItem(OrderItem orderItem);
     void deleteOrderItem(int itemId, int customerId);
+    OrderItem getOrderItemById(int id);
 }
 

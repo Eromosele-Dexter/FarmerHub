@@ -128,6 +128,36 @@ public class OrderItemRepository implements IOrderItemRepository {
         return orderItems;
     }
     
+    public OrderItem getOrderItemById(int id){
+
+        String sql = "SELECT * FROM order_items WHERE id = ?";
+
+        OrderItem orderItem = null;
+
+        try (Connection conn = DatabaseUtil.connect(DbConfig.DB_CONNECTION_STRING, DbConfig.DB_USER, DbConfig.DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                orderItem = new OrderItem(
+                    rs.getInt("item_id"),
+                    rs.getInt("customer_id"),
+                    rs.getInt("quantity"),
+                    rs.getDouble("price"),
+                    rs.getString("date_ordered")
+                );
+                orderItem.setId(rs.getInt("id"));
+                orderItem.setHasBeenPurchased(rs.getBoolean("has_been_purchased"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving order item: " + e.getMessage());
+        }
+        return orderItem;
+
+    }
+
     public void updateOrderItem(OrderItem orderItem) {
         String sql = "UPDATE order_items SET quantity = ?, price = ?, date_ordered = ?, has_been_purchased = ? WHERE id = ?";
 

@@ -2,7 +2,6 @@ package views.customerViews;
 
 import java.util.List;
 
-import controllers.LoginController;
 import controllers.OrderController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -10,19 +9,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.User;
 import models.composite_responses.OrderItemResponse;
-import views.LoginView;
+import repositories.userRepository.UserRepository;
+import services.UserService;
 
 
 public class CartPage {
     public CartPage(Stage stage, int userId, Scene previousScene) {
-        stage.setTitle("Cart Overview");
 
         // Top bar for back button and page title
         HBox topBar = new HBox();
@@ -58,26 +58,54 @@ public class CartPage {
         itemsContainer.getChildren().add(emptyCartLabel);
     } else {
         for (OrderItemResponse item : cartItems) {
-            HBox itemBox = new HBox(10);
-            itemBox.setAlignment(Pos.CENTER_LEFT);
-            itemBox.setPadding(new Insets(5, 10, 5, 10));
+            VBox card = new VBox(10);
+            card.setPadding(new Insets(10));
+            card.setStyle("-fx-border-color: lightgrey; -fx-border-radius: 5; -fx-background-color: #f9f9f9;");
 
             Label nameLabel = new Label(item.getName());
-            nameLabel.setStyle("-fx-font-size: 14px;");
+            nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
             Label priceLabel = new Label(String.format("$%.2f", item.getPrice()));
-            priceLabel.setStyle("-fx-font-size: 14px;");
-            Label quantityLabel = new Label(String.format("Qty: %d", item.getQuantity()));
-            quantityLabel.setStyle("-fx-font-size: 14px;");
+            Label quantityLabel = new Label("Qty: ");
 
-            itemBox.getChildren().addAll(nameLabel, priceLabel, quantityLabel);
-            itemsContainer.getChildren().add(itemBox);
+            // Quantity adjustment controls
+            TextField quantityField = new TextField(String.valueOf(item.getQuantity()));
+            quantityField.setPrefWidth(40);
+            Button decreaseButton = new Button("-");
+            Button increaseButton = new Button("+");
+            HBox quantityAdjustmentBox = new HBox(5, decreaseButton, quantityField, increaseButton);
+            quantityAdjustmentBox.setAlignment(Pos.CENTER_LEFT);
 
-            total += item.getPrice() * item.getQuantity();
-            totalQuantity += item.getQuantity();
+            decreaseButton.setOnAction(e -> {
+                int quantity = Integer.parseInt(quantityField.getText());
+                if (quantity > 1) {
+                    quantityField.setText(String.valueOf(--quantity));
+                    OrderController.reduceQuantityBy1(item.getOrderItemId(), userId);
+                }
+            });
+
+            increaseButton.setOnAction(e -> {
+                int quantity = Integer.parseInt(quantityField.getText());
+                
+                if(quantity < OrderController.getQuantityAvailable(item.getItemId())){
+                    quantityField.setText(String.valueOf(++quantity));
+                    OrderController.increaseQuantityBy1(item.getOrderItemId(), userId);
+                }
+                    
+            });
+
+
+            HBox infoBox = new HBox(10, nameLabel, priceLabel, quantityLabel, quantityAdjustmentBox);
+            infoBox.setAlignment(Pos.CENTER_LEFT);
+            card.getChildren().add(infoBox);
+
+            itemsContainer.getChildren().add(card);
+
+            total += item.getPrice() * Integer.parseInt(quantityField.getText());
+            totalQuantity += Integer.parseInt(quantityField.getText());
         }
     }
 
-    Label totalLabel = new Label(String.format("Total Items: %d, Total Price: $%.2f", totalQuantity, total));
+    Label totalLabel = new Label(String.format("Total Items: %d \n Total Price: $%.2f\n\n\n", totalQuantity, total));
     totalLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
     Button placeOrderButton = new Button("Place Order");
@@ -89,12 +117,16 @@ public class CartPage {
         OrderController.placeOrder(userId);
         
         System.out.println("Order Placed!");
-       
+
+        UserService userService = new UserService(new UserRepository());
+
+        User user = userService.handleGetUserById(userId);
 
         PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
 
 		delay.setOnFinished(e -> {
             stage.setScene(previousScene);
+            new CustomerLandingPage(stage, user);
 		});
 
 		delay.play();
@@ -103,8 +135,8 @@ public class CartPage {
     VBox mainContainer = new VBox();
     mainContainer.getChildren().addAll(topBar, itemsContainer);
     if (!cartItems.isEmpty()) {
-        mainContainer.getChildren().add(placeOrderButton); // Only show the place order button if there are items in the cart
         mainContainer.getChildren().add(totalLabel); // Only show the place order button if there are items in the cart
+        mainContainer.getChildren().add(placeOrderButton); // Only show the place order button if there are items in the cart
     }
     mainContainer.setAlignment(Pos.TOP_CENTER);
     mainContainer.setPadding(new Insets(20));

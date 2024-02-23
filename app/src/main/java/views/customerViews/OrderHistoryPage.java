@@ -20,7 +20,6 @@ import utils.DateUtils;
 public class OrderHistoryPage {
 
    public OrderHistoryPage(Stage stage, int userId, Scene previousScene) {
-    stage.setTitle("Order History");
 
     HBox topBar = new HBox();
     topBar.setAlignment(Pos.CENTER_LEFT);
