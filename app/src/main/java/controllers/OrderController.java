@@ -42,7 +42,13 @@ public class OrderController {
 
         List<OrderItemResponse> orderItems =  orderService.getOrderHistory(userId);
 
-        System.out.println("Order Items: " + orderItems);
+        return orderItems;
+    }
+
+    public static List<OrderItemResponse> viewSalesHistory(int userId) {
+        OrderService orderService = new OrderService(new OrderItemRepository(), new ItemService(new ItemRepository()));
+
+        List<OrderItemResponse> orderItems =  orderService.getSalesHistory(userId);
 
         return orderItems;
     }

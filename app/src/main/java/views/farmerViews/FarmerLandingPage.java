@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import models.Item;
 import models.Machine;
 import models.User;
+import utils.StringUtils;
 
 public class FarmerLandingPage {
 
@@ -40,11 +41,11 @@ public class FarmerLandingPage {
 		HBox.setHgrow(linksContainer, javafx.scene.layout.Priority.ALWAYS); // This will push the linksContainer to the right
 
 		Hyperlink salesHistoryLink = new Hyperlink("Sales History 📜");
-		salesHistoryLink.setOnAction(e -> showSalesHistoryPage(stage, userId));
+
 		salesHistoryLink.setStyle("-fx-font-size: 16px;");
 
 		Hyperlink uploadItemLink = new Hyperlink("Upload Item 💭");
-		uploadItemLink.setOnAction(e -> showUploadItemPage(stage, userId));
+
 		uploadItemLink.setStyle("-fx-font-size: 16px;");
         
   		// Add both links to the links container
@@ -69,13 +70,13 @@ public class FarmerLandingPage {
             Label itemName = new Label("Name: " + item.getName());
             itemName.setStyle("-fx-font-weight: bold; -fx-font-size: 1.2em; -fx-letter-spacing: 0.1em; -fx-text-fill: #333; -fx-font-family: 'Arial';");
             Label itemDescription = new Label("Description: " + item.getDescription());
-            Label itemPrice = new Label("Price: $" + item.getPrice());
+            Label itemPrice = new Label(String.format("Price: $%s", StringUtils.formatNumberPrice(item.getPrice())));
             Label itemQuantity = new Label("Quantity Available: " + item.getQuantityAvailable());
 
             Label itemCondition = null;
             if (item instanceof Machine) {
                 Machine machine = (Machine) item;
-                itemCondition = new Label("Condition: " + machine.getCondition());
+                itemCondition = new Label("Condition: " + StringUtils.capitalize(machine.getCondition()).replace("_", " "));
             }
 
             Button updateButton = new Button("Update");
@@ -85,7 +86,10 @@ public class FarmerLandingPage {
             buttonsBox.setAlignment(Pos.CENTER_RIGHT);
             buttonsBox.getChildren().addAll(updateButton, deleteButton);
 
-            updateButton.setOnAction(e -> showUpdateItemPage(stage, item, userId));
+            updateButton.setOnAction(e -> {
+                Scene currentScene = stage.getScene();
+                showUpdateItemPage(stage, item, userId, currentScene);
+            });
             deleteButton.setOnAction(e -> {
                 ItemController.deleteItem(item);
                 vbox.getChildren().remove(card); 
@@ -113,21 +117,23 @@ public class FarmerLandingPage {
 
         // Setting the scrollPane as the scene root
         Scene scene = new Scene(root, 400, 600);
+        salesHistoryLink.setOnAction(e -> showSalesHistoryPage(stage, userId,scene));
+        uploadItemLink.setOnAction(e -> showUploadItemPage(stage, userId,scene));
         stage.setScene(scene);
         stage.show();
     }
 
-    private void showSalesHistoryPage(Stage stage, int userId) {
-        new SalesHistoryPage(stage, userId);
+    private void showSalesHistoryPage(Stage stage, int userId, Scene scene) {
+        new SalesHistoryPage(stage, userId, scene);
     }
 
-    private void showUpdateItemPage(Stage stage, Item item, int userId) {
+    private void showUpdateItemPage(Stage stage, Item item, int userId, Scene scene) {
 
-        new UploadItemPage(stage, item, userId);
+        new UploadItemPage(stage, item, userId, scene);
     }
 
-	private void showUploadItemPage(Stage stage, int userId) {
+	private void showUploadItemPage(Stage stage, int userId, Scene scene) {
    
-        new UploadItemPage(stage, null, userId);
+        new UploadItemPage(stage, null, userId, scene);
     }
 }

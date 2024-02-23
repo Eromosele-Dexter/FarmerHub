@@ -14,6 +14,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -22,7 +24,25 @@ import models.Item;
 public class UploadItemPage {
 
 
-    public UploadItemPage(Stage stage, Item item, int userId) {
+    public UploadItemPage(Stage stage, Item item, int userId, Scene previousScene) {
+
+        HBox topBar = new HBox();
+        topBar.setPadding(new Insets(10, 10, 10, 10));
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.setSpacing(20);
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> stage.setScene(previousScene));
+
+        Label pageTitle = new Label(item == null ? "Farmers Hub - Upload Item" : "Farmers Hub - Edit Item");
+        pageTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+
+        HBox.setHgrow(pageTitle, Priority.ALWAYS);
+        pageTitle.setMaxWidth(Double.MAX_VALUE);
+        pageTitle.setAlignment(Pos.CENTER);
+
+        topBar.getChildren().addAll(backButton, pageTitle);
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -116,7 +136,7 @@ public class UploadItemPage {
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(uploadButton);
-        grid.add(hbBtn, 0,13); // Adjust grid placement for button
+        grid.add(hbBtn, 0,13); 
 
         Text actionTarget = new Text();
         actionTarget.setStyle("-fx-font-size: 14px; -fx-fill: #ff0000;");
@@ -132,9 +152,12 @@ public class UploadItemPage {
             ItemController.handleSetItemProperties(item.getId(), itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox);
         }
 
-        	
+        VBox mainContainer = new VBox(topBar); 
+        mainContainer.getChildren().add(grid); 
+        mainContainer.setAlignment(Pos.TOP_CENTER);
+        mainContainer.setPadding(new Insets(20));
 
-        Scene scene = new Scene(grid, 450, 700); 
+        Scene scene = new Scene(mainContainer, 450, 700); 
         stage.setScene(scene);
         stage.show();
     }

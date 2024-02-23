@@ -146,7 +146,7 @@ public class OrderService {
         updateOrder(orderItems, new Date().getTime()+"");
     }
 
-    public List<OrderItemResponse> getItemSoldHistory(int farmerId) {
+    public List<OrderItemResponse> getSalesHistory(int farmerId) {
         List<Item> farmersItems = itemService.handleGetItemsByFarmerId(farmerId);
         
         List<Integer> itemIds = new ArrayList<Integer>();
@@ -191,6 +191,7 @@ public class OrderService {
         item.getDescription(), item.getPrice(), orderItem.getCustomerId(),
          orderItem.getQuantity(), orderItem.getDateOrdered());
     }
+
 
     public void reduceQuantity(int orderItemId, int userId) {
         OrderItem orderItem = orderItemRepository.getOrderItemById(orderItemId
