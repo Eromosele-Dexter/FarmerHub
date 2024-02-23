@@ -20,11 +20,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Item;
+import statics.DbConfig;
 
 public class UploadItemPage {
 
+    private ItemController itemController;
+
 
     public UploadItemPage(Stage stage, Item item, int userId, Scene previousScene) {
+        this.itemController = new ItemController(DbConfig.IS_MOCK);
 
         HBox topBar = new HBox();
         topBar.setPadding(new Insets(10, 10, 10, 10));
@@ -144,12 +148,12 @@ public class UploadItemPage {
         
         uploadButton.setOnAction(
             item == null ?
-            ItemController.createItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget) :
-            ItemController.updateItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget)
+            itemController.createItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget) :
+            itemController.updateItemOnButtonClick(itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox, userId, stage, actionTarget)
         );
 
         if (item != null) {
-            ItemController.handleSetItemProperties(item.getId(), itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox);
+            itemController.handleSetItemProperties(item.getId(), itemNameField, itemDescriptionArea, itemPriceField, itemTypeChoiceBox, quantityField, conditionChoiceBox);
         }
 
         VBox mainContainer = new VBox(topBar); 

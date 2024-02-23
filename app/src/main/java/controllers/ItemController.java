@@ -14,26 +14,36 @@ import models.Machine;
 import models.Produce;
 import models.User;
 import repositories.itemRepository.ItemRepository ;
+import repositories.itemRepository.MockItemRepository;
+import repositories.userRepository.MockUserRepository;
 import repositories.userRepository.UserRepository;
 import services.ItemService;
 import services.UserService;
 import views.farmerViews.FarmerLandingPage;
 
-// TODO: try to make class non-static so Item controller doesnt depend on implementation of ItemService and ItemRepository
 public class ItemController {
 
+    private ItemService itemService;
+    private UserService userService;
 
-    public static List<Item> handleGetItemsByFarmerId(int farmerId) {
+    public ItemController(boolean isMock) {
+        if(isMock) {
+            this.itemService = new ItemService(new MockItemRepository());
+            this.userService = new UserService(new MockUserRepository());
+        } else {
+            this.itemService = new ItemService(new ItemRepository());
+            this.userService = new UserService(new UserRepository());
+        }
+    }
 
-        ItemService itemService = new ItemService(new ItemRepository ()); 
 
+    public List<Item> handleGetItemsByFarmerId(int farmerId) {
         List<Item> items = itemService.handleGetItemsByFarmerId(farmerId);
 
         return items.isEmpty() ? null :  items;
     }
 
-    public static void handleSetItemProperties(int itemId, TextField itemNameField, TextArea itemDescriptionArea, TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox) {
-        ItemService itemService = new ItemService(new ItemRepository ());
+    public void handleSetItemProperties(int itemId, TextField itemNameField, TextArea itemDescriptionArea, TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox) {
 
         Item item = itemService.handleGetItemById(itemId);
 
@@ -59,9 +69,8 @@ public class ItemController {
 
 
 
-    public static EventHandler<ActionEvent> createItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
+    public EventHandler<ActionEvent> createItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
             TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox, int farmerId, Stage stage, Text actionTarget) {
-                ItemService itemService = new ItemService(new ItemRepository ());
 
                 return new EventHandler<ActionEvent>() {
                     @Override
@@ -79,8 +88,6 @@ public class ItemController {
                             return;
                         }
 
-                        UserService userService = new UserService(new UserRepository());
-
 		                User farmer = userService.handleGetUserById(farmerId);
 
                         new FarmerLandingPage(stage, farmer);
@@ -88,9 +95,8 @@ public class ItemController {
                 };
     }
 
-    public static EventHandler<ActionEvent> updateItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
+    public EventHandler<ActionEvent> updateItemOnButtonClick(TextField itemNameField, TextArea itemDescriptionArea,
         TextField itemPriceField, ChoiceBox<String> itemTypeBox, TextField quantityField, ChoiceBox<String> conditionBox, int farmerId, Stage stage, Text actionTarget) {
-        ItemService itemService = new ItemService(new ItemRepository ());
 
         return new EventHandler<ActionEvent>() {
             @Override
@@ -108,8 +114,6 @@ public class ItemController {
                     return;
                 }
 
-                UserService userService = new UserService(new UserRepository());
-
                 User farmer = userService.handleGetUserById(farmerId);
 
                 new FarmerLandingPage(stage, farmer);
@@ -117,24 +121,19 @@ public class ItemController {
         };
     }
     
-    public static void deleteItem(Item item) {
-        ItemService itemService = new ItemService(new ItemRepository ());
-
+    public void deleteItem(Item item) {
         itemService.handleDeleteItem(item);
     }
 
 
 
-    public static List<Item> handleGetAllItems() {
-        ItemService itemService = new ItemService(new ItemRepository ());
-
+    public List<Item> handleGetAllItems() {
         List<Item> items = itemService.handleGetAllItems();
 
         return items.isEmpty() ? null :  items;
     }
 
-    public static Item getItemById(int itemId) {
-        ItemService itemService = new ItemService(new ItemRepository ());
+    public Item getItemById(int itemId) {
 
         Item item = itemService.handleGetItemById(itemId);
 

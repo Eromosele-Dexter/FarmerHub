@@ -29,6 +29,9 @@ public class FarmerLandingPage {
     private int userId;
     private User user;
 
+    private ItemController itemController;
+
+
     public FarmerLandingPage(Stage stage, User user) {
         this.stage = stage;
         this.userId = user.getId();
@@ -96,7 +99,7 @@ public class FarmerLandingPage {
 
     private void fetchAndDisplayItems() {
         Platform.runLater(() -> {
-            List<Item> fetchedItems = ItemController.handleGetItemsByFarmerId(userId); 
+            List<Item> fetchedItems = itemController.handleGetItemsByFarmerId(userId); 
             List<Item> items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems) : FXCollections.observableArrayList();
             vbox.getChildren().clear(); // Clear existing items
 
@@ -129,7 +132,7 @@ public class FarmerLandingPage {
                     showUpdateItemPage(stage, item, userId, currentScene);
                 });
                 deleteButton.setOnAction(e -> {
-                    ItemController.deleteItem(item);
+                    itemController.deleteItem(item);
                     vbox.getChildren().remove(card); 
                 });
 

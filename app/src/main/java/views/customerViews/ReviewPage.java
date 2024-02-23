@@ -17,11 +17,18 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.composite_responses.RatingAndReviewResponse;
+import statics.DbConfig;
 import utils.DateUtils;
 
 public class ReviewPage {
 
+    private ReviewController reviewController;
+    private ItemController itemController;
+
     public ReviewPage(Stage stage, int itemId, Scene previousScene, int userId) {
+
+        this.reviewController = new ReviewController(DbConfig.IS_MOCK);
+        this.itemController = new ItemController(DbConfig.IS_MOCK);
        
 
         HBox topBar = new HBox();
@@ -47,11 +54,11 @@ public class ReviewPage {
         mainLayout.getChildren().add(topBar);
 
 
-        String itemName = ItemController.getItemById(itemId).getName();
+        String itemName = itemController.getItemById(itemId).getName();
         pageTitle.setText("Reviews for " + itemName);
 
 
-        List<RatingAndReviewResponse> reviews = ReviewController.getAllReviewsByItemId(itemId);
+        List<RatingAndReviewResponse> reviews = reviewController.getAllReviewsByItemId(itemId);
 
         for (RatingAndReviewResponse review : reviews) {
             VBox reviewBox = new VBox(5);
@@ -90,7 +97,7 @@ public class ReviewPage {
 
         Button submitReviewButton = new Button("Submit Review");
 
-        submitReviewButton.setOnAction(ReviewController.submitReview(ratingInput, reviewInput, stage, itemId, userId, previousScene));
+        submitReviewButton.setOnAction(reviewController.submitReview(ratingInput, reviewInput, stage, itemId, userId, previousScene));
 
         mainLayout.getChildren().addAll(new Label("Add Your Review:"), ratingInput, reviewInput, submitReviewButton);
 

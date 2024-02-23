@@ -2,6 +2,7 @@ package views.customerViews;
 
 import java.util.List;
 
+import controllers.LoginController;
 import controllers.OrderController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -17,8 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.User;
 import models.composite_responses.OrderItemResponse;
-import repositories.userRepository.UserRepository;
-import services.UserService;
+import statics.DbConfig;
 import utils.StringUtils;
 
 
@@ -26,9 +26,13 @@ public class CartPage {
 
         private int userId;
         private Label totalLabel;
+        private OrderController orderController;
+        private LoginController loginController;
 
 
         public CartPage(Stage stage, int userId, Scene previousScene) {
+            this.orderController = new OrderController(DbConfig.IS_MOCK);
+            this.loginController = new LoginController(DbConfig.IS_MOCK);
 
             this.userId = userId;
 
@@ -40,7 +44,7 @@ public class CartPage {
             topBar.setSpacing(20);
         
             Button backButton = new Button("Back");
-            backButton.setOnAction(e -> new CustomerLandingPage(stage, new UserService(new UserRepository()).handleGetUserById(userId)));
+            backButton.setOnAction(e -> new CustomerLandingPage(stage, loginController.getUserById(userId)));
         
             Label pageTitle = new Label("Your Cart");
             pageTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
@@ -51,7 +55,7 @@ public class CartPage {
 
             topBar.getChildren().addAll(backButton, pageTitle);
         
-            List<OrderItemResponse> cartItems = OrderController.viewCart(userId);
+            List<OrderItemResponse> cartItems = orderController.viewCart(userId);
         
             VBox itemsContainer = new VBox(10);
             itemsContainer.setAlignment(Pos.TOP_CENTER);
@@ -92,11 +96,11 @@ public class CartPage {
                     int quantity = Integer.parseInt(quantityField.getText());
                     if (quantity > 1) {
                         quantityField.setText(String.valueOf(--quantity));
-                        OrderController.reduceQuantityBy1(item.getOrderItemId(), userId);
+                        orderController.reduceQuantityBy1(item.getOrderItemId(), userId);
                     }
                     else if (quantity == 1) {
-                        // OrderController.removeFromCart(item.getOrderItemId(), userId);
-                        OrderController.reduceQuantityBy1(item.getOrderItemId(), userId);
+                        // orderController.removeFromCart(item.getOrderItemId(), userId);
+                        orderController.reduceQuantityBy1(item.getOrderItemId(), userId);
                         itemsContainer.getChildren().remove(card);    
                     }
                     updateTotals(); 
@@ -106,9 +110,9 @@ public class CartPage {
                 increaseButton.setOnAction(e -> {
                     int quantity = Integer.parseInt(quantityField.getText());
                     
-                    if(quantity < OrderController.getQuantityAvailable(item.getItemId())){
+                    if(quantity < orderController.getQuantityAvailable(item.getItemId())){
                         quantityField.setText(String.valueOf(++quantity));
-                        OrderController.increaseQuantityBy1(item.getOrderItemId(), userId);
+                        orderController.increaseQuantityBy1(item.getOrderItemId(), userId);
                     }
                     updateTotals();
                         
@@ -135,11 +139,9 @@ public class CartPage {
         placeOrderButton.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white;");
         
         placeOrderButton.setOnAction(event -> {
-            OrderController.placeOrder(userId);
+            orderController.placeOrder(userId);
             
-            UserService userService = new UserService(new UserRepository());
-
-            User user = userService.handleGetUserById(userId);
+            User user = loginController.getUserById(userId);
 
             PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
 
@@ -169,7 +171,7 @@ public class CartPage {
         double total = 0;
         int totalQuantity = 0;
     
-        for (OrderItemResponse item : OrderController.viewCart(userId)) {
+        for (OrderItemResponse item : orderController.viewCart(userId)) {
             total += item.getPrice() * item.getQuantity();
             totalQuantity += item.getQuantity();
         }

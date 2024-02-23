@@ -13,11 +13,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.composite_responses.OrderItemResponse;
+import statics.DbConfig;
 import utils.DateUtils;
 
 public class SalesHistoryPage {
 
+    private OrderController orderController;
+
    public SalesHistoryPage(Stage stage, int userId, Scene previousScene) {
+        this.orderController = new OrderController(DbConfig.IS_MOCK);
 
         HBox topBar = new HBox();
         topBar.setPadding(new Insets(10, 10, 10, 10));
@@ -36,7 +40,7 @@ public class SalesHistoryPage {
 
         topBar.getChildren().addAll(backButton, pageTitle);
 
-        List<OrderItemResponse> orderItems = OrderController.viewSalesHistory(userId);
+        List<OrderItemResponse> orderItems = orderController.viewSalesHistory(userId);
 
         VBox orderList = new VBox();
         orderList.setAlignment(Pos.TOP_CENTER);

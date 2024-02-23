@@ -28,6 +28,7 @@ import javafx.util.Duration;
 import models.Item;
 import models.Machine;
 import models.User;
+import statics.DbConfig;
 import utils.StringUtils;
 
 public class CustomerLandingPage {
@@ -39,11 +40,17 @@ public class CustomerLandingPage {
 	Hyperlink goToCartLink; 
 	Hyperlink orderHistoryLink;
 	private Map<Integer, Integer> itemQuantities = new HashMap<>(); // Item ID to Quantity
+	private OrderController orderController;
+	private ItemController itemController;
+	private ReviewController reviewController;
 
 	public CustomerLandingPage(Stage stage, User user) {
         this.stage = stage;
         this.userId = user.getId();
 		this.user = user;
+		this.orderController = new OrderController(DbConfig.IS_MOCK);
+		this.itemController = new ItemController(DbConfig.IS_MOCK);
+		this.reviewController = new ReviewController(DbConfig.IS_MOCK);
 
         initializeUI();
         startItemFetchLoop();
@@ -71,7 +78,7 @@ public class CustomerLandingPage {
 
 		orderHistoryLink.setStyle("-fx-font-size: 16px;");
 
-		int cartSize = OrderController.getTotalCartQuantity(userId);
+		int cartSize = orderController.getTotalCartQuantity(userId);
 
 		goToCartLink = new Hyperlink(cartSize == 0 ? "Cart 🛒" :"Cart" + "("+cartSize+") "+ "🛒" );
 		
@@ -123,7 +130,7 @@ public class CustomerLandingPage {
 
 	 private void fetchAndDisplayItems() {
         Platform.runLater(() -> {
-            List<Item> fetchedItems = ItemController.handleGetAllItems();
+            List<Item> fetchedItems = itemController.handleGetAllItems();
             List<Item> items = fetchedItems != null ? FXCollections.observableArrayList(fetchedItems) : FXCollections.observableArrayList();
             vbox.getChildren().clear(); // Clear existing items before adding new ones
 
@@ -174,8 +181,8 @@ public class CustomerLandingPage {
 	
 				addToCartButton.setOnAction(e -> {
 					int quantity = Integer.parseInt(quantityLabel.getText()); // Get the adjusted quantity
-					OrderController.addToCart(item, quantity, userId);
-					int cartSize = OrderController.getTotalCartQuantity(userId);
+					orderController.addToCart(item, quantity, userId);
+					int cartSize = orderController.getTotalCartQuantity(userId);
 					goToCartLink.setText("Cart" + "("+cartSize+") "+ "🛒");
 					quantityLabel.setText("0"); 
 					itemQuantities.put(item.getId(), 0); 
@@ -184,7 +191,7 @@ public class CustomerLandingPage {
 	
 				seeReviewsButton.setOnAction(e -> {
 					Scene currentScene = stage.getScene();
-					ReviewController.viewReviews(item, stage, currentScene, userId);
+					reviewController.viewReviews(item, stage, currentScene, userId);
 				});
 
 				HBox quantityAdjustmentBox = new HBox(5, decreaseButton, quantityLabel, increaseButton);

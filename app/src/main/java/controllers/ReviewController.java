@@ -14,7 +14,9 @@ import javafx.util.Duration;
 import models.Item;
 import models.RatingAndReview;
 import models.composite_responses.RatingAndReviewResponse;
+import repositories.reviewRepository.MockReviewRepository;
 import repositories.reviewRepository.ReviewRepository;
+import repositories.userRepository.MockUserRepository;
 import repositories.userRepository.UserRepository;
 import services.RatingAndReviewService;
 import services.UserService;
@@ -22,19 +24,28 @@ import views.customerViews.ReviewPage;
 
 public class ReviewController {
 
+    private RatingAndReviewService ratingAndReviewService;
+    private UserService userService;
 
-    public static void viewReviews(Item item, Stage stage, Scene scene, int userId) {
+    public ReviewController(boolean isMock) {
+        if(isMock){
+            this.userService = new UserService(new MockUserRepository());
+            this.ratingAndReviewService = new RatingAndReviewService(new MockReviewRepository(), userService);
+        }
+        else {
+            this.userService = new UserService(new UserRepository());
+            this.ratingAndReviewService = new RatingAndReviewService(new ReviewRepository(), userService);
+        }
+    }
+
+    public void viewReviews(Item item, Stage stage, Scene scene, int userId) {
         new ReviewPage(stage, item.getId(), scene, userId);
         return;
     }
 
-    public static EventHandler<ActionEvent> submitReview(TextField rating, TextArea review, Stage stage, int itemId, int userId, Scene scene) {
+    public EventHandler<ActionEvent> submitReview(TextField rating, TextArea review, Stage stage, int itemId, int userId, Scene scene) {
 
 			return new EventHandler<ActionEvent>() {
-
-				UserService userService = new UserService(new UserRepository());
-
-                RatingAndReviewService ratingAndReviewService = new RatingAndReviewService(new ReviewRepository(), userService);
 
 				@Override
 				public void handle(ActionEvent event) {
@@ -69,8 +80,7 @@ public class ReviewController {
 
 		}
 
-    public static List<RatingAndReviewResponse> getAllReviewsByItemId(int itemId) {
-        RatingAndReviewService ratingAndReviewService = new RatingAndReviewService(new ReviewRepository(), new UserService(new UserRepository()));
+    public List<RatingAndReviewResponse> getAllReviewsByItemId(int itemId) {
         return ratingAndReviewService.getAllRatingAndReviewByItemId(itemId);
     }
     
